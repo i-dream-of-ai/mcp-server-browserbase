@@ -1,7 +1,7 @@
 import { Stagehand } from "@browserbasehq/stagehand";
 import { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
-import { getServerInstance, operationLogs } from "./logging.js";
-import { screenshots } from "./resources.js";
+import { getServerInstance, operationLogs } from "../logging.js";
+import { screenshots } from "../resources.js";
 
 // Define the Stagehand tools
 export const TOOLS: Tool[] = [

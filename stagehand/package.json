@@ -21,9 +21,9 @@
   "dependencies": {
     "@browserbasehq/sdk": "^2.0.0",
     "@browserbasehq/stagehand": "^2.0.0",
-    "@modelcontextprotocol/sdk": "^1.0.3",
-    "@modelcontextprotocol/server-stagehand": "file:",
-    "@playwright/test": "^1.49.0"
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "@playwright/test": "^1.49.0",
+    "commander": "^14.0.0"
   },
   "devDependencies": {
     "shx": "^0.3.4",
