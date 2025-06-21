@@ -8,7 +8,7 @@ import { CallToolRequestSchema, ListResourcesRequestSchema, ListToolsRequestSche
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Context } from "./context.js";
-import { TOOLS } from "./tools/tools.js";
+import { TOOLS } from "./tools/index.js";
 
 export async function createServer(config: Config): Promise<Server> {
   // Create the server

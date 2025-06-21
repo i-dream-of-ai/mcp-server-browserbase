@@ -2,7 +2,6 @@ import { Stagehand } from "@browserbasehq/stagehand";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Config } from "../config.js";
 import { CallToolResult, TextContent, ImageContent } from "@modelcontextprotocol/sdk/types.js";
-import { handleToolCall } from "./tools/tools.js";
 import { listResources, readResource } from "./resources.js";
 import { 
   ensureLogDirectory, 
@@ -172,10 +171,8 @@ export class Context {
     try {
       log(`Executing tool: ${tool.schema.name} with args: ${JSON.stringify(args)}`, 'info');
       
-      // Check if this tool has a handle method (new session tools)
-      // Only use handle method for session create and close tools
-      if ("handle" in tool && typeof tool.handle === "function" && 
-          (tool.schema.name === "browserbase_session_create" || tool.schema.name === "browserbase_session_close")) {
+      // Check if this tool has a handle method (new tool system)
+      if ("handle" in tool && typeof tool.handle === "function") {
         const toolResult = await tool.handle(this as any, args);
         
         if (toolResult?.action) {
@@ -193,10 +190,8 @@ export class Context {
           };
         }
       } else {
-        const stagehand = await this.getStagehand();
-        const result = await handleToolCall(tool.schema.name, args, stagehand);
-        log(`Tool ${tool.schema.name} completed successfully`, 'info');
-        return result;
+        // Fallback for any legacy tools without handle method
+        throw new Error(`Tool ${tool.schema.name} does not have a handle method`);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
