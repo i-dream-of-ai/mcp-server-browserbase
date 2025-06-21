@@ -7,11 +7,16 @@
   "homepage": "https://modelcontextprotocol.io",
   "bugs": "https://github.com/modelcontextprotocol/servers/issues",
   "type": "module",
+  "main": "./cli.js",
   "bin": {
-    "mcp-server-stagehand": "dist/index.js"
+    "mcp-server-stagehand": "cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "cli.js",
+    "index.d.ts",
+    "index.js",
+    "config.d.ts"
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",

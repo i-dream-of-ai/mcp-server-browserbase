@@ -3,28 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { sanitizeForFilePath } from './tools/utils.js'; 
 import type { Cookie } from "playwright-core";
+import type { Config } from '../config.js';
 
 export type ToolCapability = 'core' | string; 
-
-export interface Config {
-  browserbaseApiKey?: string; 
-  browserbaseProjectId?: string; 
-  server?: {
-    port?: number;
-    host?: string;
-  };
-  proxies?: boolean;
-  advancedStealth?: boolean;
-  context?: {
-    contextId?: string;
-    persist?: boolean;
-  };
-  viewPort?: {
-    browserWidth?: number;
-    browserHeight?: number;
-  };
-  cookies?: Cookie[]; 
-}
 
 // Define Command Line Options Structure
 export type CLIOptions = {

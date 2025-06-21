@@ -10,17 +10,6 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { Context } from "./context.js";
 import { TOOLS } from "./tools/tools.js";
 
-// Environment variables configuration
-const requiredEnvVars = {
-  BROWSERBASE_API_KEY: process.env.BROWSERBASE_API_KEY,
-  BROWSERBASE_PROJECT_ID: process.env.BROWSERBASE_PROJECT_ID,
-};
-
-// Validate required environment variables
-Object.entries(requiredEnvVars).forEach(([name, value]) => {
-  if (!value) throw new Error(`${name} environment variable is required`);
-});
-
 export async function createServer(config: Config): Promise<Server> {
   // Create the server
   const server = new Server(
@@ -31,6 +20,7 @@ export async function createServer(config: Config): Promise<Server> {
         tools: { list: true, call: true },
         prompts: { list: true, get: true },
         notifications: { resources: { list_changed: true } },
+        logging: {},
       },
     }
   ); 
