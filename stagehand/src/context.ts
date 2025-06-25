@@ -13,7 +13,6 @@ import {
 } from "./logging.js";
 import { 
   getSession, 
-  getSessionReadOnly, 
   defaultSessionId, 
   type BrowserSession 
 } from "./sessionManager.js";
@@ -84,7 +83,6 @@ export class Context {
       this.stagehands.delete(sessionId);
     }
   }
-
   public async getActivePage(): Promise<BrowserSession["page"] | null> {
     // Try to get page from Stagehand first (if available for this session)
     const stagehand = this.stagehands.get(this.currentSessionId);
@@ -94,77 +92,19 @@ export class Context {
     
     // Fallback to session manager
     const session = await getSession(this.currentSessionId, this.config);
-    if (!session || !session.page || session.page.isClosed()) {
-      try {
-        const currentSession = await getSession(
-          this.currentSessionId,
-          this.config
-        );
-        if (
-          !currentSession ||
-          !currentSession.page ||
-          currentSession.page.isClosed()
-        ) {
-          return null;
-        }
-        return currentSession.page;
-      } catch (refreshError) {
-        return null;
-      }
+    if (session && session.page && !session.page.isClosed()) {
+      return session.page;
     }
-    return session.page;
+    
+    return null;
   }
 
-  // Will create a new default session if one doesn't exist
-  public async getActiveBrowser(): Promise<BrowserSession["browser"] | null> {
-    const session = await getSession(this.currentSessionId, this.config);
-    if (!session || !session.browser || !session.browser.isConnected()) {
-      try {
-        const currentSession = await getSession(
-          this.currentSessionId,
-          this.config
-        );
-        if (
-          !currentSession ||
-          !currentSession.browser ||
-          !currentSession.browser.isConnected()
-        ) {
-          return null;
-        }
-        return currentSession.browser;
-      } catch (refreshError) {
-        return null;
-      }
-    }
-    return session.browser;
-  }
-
-  /**
-   * Get the active browser without triggering session creation.
-   * This is a read-only operation used when we need to check for an existing browser
-   * without side effects (e.g., during close operations).
-   * @returns The browser if it exists and is connected, null otherwise
-   */
-  public getActiveBrowserReadOnly(): BrowserSession["browser"] | null {
-    const session = getSessionReadOnly(this.currentSessionId);
+  public async getActiveBrowser(createIfMissing: boolean = true): Promise<BrowserSession["browser"] | null> {
+    const session = await getSession(this.currentSessionId, this.config, createIfMissing);
     if (!session || !session.browser || !session.browser.isConnected()) {
       return null;
     }
     return session.browser;
-  }
-
-  /**
-   * Get the active page without triggering session creation.
-   * This is a read-only operation used when we need to check for an existing page
-   * without side effects.
-   * @returns The page if it exists and is not closed, null otherwise
-   */
-  public getActivePageReadOnly(): BrowserSession["page"] | null {
-    const session = getSessionReadOnly(this.currentSessionId);
-    if (!session || !session.page || session.page.isClosed()) {
-      return null;
-    }
-    return session.page;
   }
 
   async run(tool: any, args: any): Promise<CallToolResult> {
@@ -203,6 +143,10 @@ export class Context {
     }
   }
 
+  /**
+   * List resources
+   * Documentation: https://modelcontextprotocol.io/docs/concepts/resources
+   */
   listResources() {
     return listResources();
   }

@@ -22,7 +22,7 @@ const browsers = new Map<string, BrowserSession>();
 let defaultBrowserSession: BrowserSession | null = null;
 
 // Define a specific ID for the default session
-export const defaultSessionId = "browserbase_session_main";
+export const defaultSessionId = `browserbase_session_main_${Date.now()}`;
 
 // Keep track of the active session ID. Defaults to the main session.
 let activeSessionId: string = defaultSessionId;
@@ -277,9 +277,10 @@ export async function ensureDefaultSessionInternal(
 // Get a specific session by ID
 export async function getSession(
   sessionId: string,
-  config: Config
+  config: Config,
+  createIfMissing: boolean = true
 ): Promise<BrowserSession | null> {
-  if (sessionId === defaultSessionId) {
+  if (sessionId === defaultSessionId && createIfMissing) {
     try {
       return await ensureDefaultSessionInternal(config);
     } catch (error) {
@@ -321,37 +322,6 @@ export async function getSession(
   // Session appears valid, make it active
   setActiveSessionId(sessionId);
   process.stderr.write(`[SessionManager] Using valid session: ${sessionId}\n`);
-  return sessionObj;
-}
-
-/**
- * Get a session by ID without creating new sessions.
- * This is a read-only operation that never triggers session creation.
- * Used for operations like closing sessions where we don't want side effects.
- * @param sessionId The session ID to retrieve
- * @returns The session if it exists and is valid, null otherwise
- */
-export function getSessionReadOnly(sessionId: string): BrowserSession | null {
-  // Check if it's the default session
-  if (sessionId === defaultSessionId && defaultBrowserSession) {
-    // Only return if it's actually connected and valid
-    if (defaultBrowserSession.browser.isConnected() && !defaultBrowserSession.page.isClosed()) {
-      return defaultBrowserSession;
-    }
-    return null;
-  }
-
-  // For non-default sessions, check the browsers map
-  const sessionObj = browsers.get(sessionId);
-  if (!sessionObj) {
-    return null;
-  }
-
-  // Validate the session is still active
-  if (!sessionObj.browser.isConnected() || sessionObj.page.isClosed()) {
-    return null;
-  }
-
   return sessionObj;
 }
 

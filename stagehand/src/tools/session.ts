@@ -144,7 +144,7 @@ async function handleCloseSession(
     // Step 1: Attempt to get the active browser instance WITHOUT creating a new one
     try {
       // Use read-only version to avoid creating new sessions
-      browser = context.getActiveBrowserReadOnly();
+      browser = await context.getActiveBrowser(false);
     } catch (error: any) {
       process.stderr.write(
         `[tool.closeSession] Error retrieving active browser (session ID was ${previousSessionId || 'default/unknown'}): ${error.message || String(error)}`
