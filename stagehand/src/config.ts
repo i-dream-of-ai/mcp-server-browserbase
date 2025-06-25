@@ -45,7 +45,6 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
   const mergedConfig = mergeConfig(defaultConfig, cliConfig);
 
   // --- Add Browserbase Env Vars ---
-  // Ensure env vars are read *after* dotenv potentially runs (in index.ts)
   if (!mergedConfig.browserbaseApiKey) {
     mergedConfig.browserbaseApiKey = process.env.BROWSERBASE_API_KEY;
   }

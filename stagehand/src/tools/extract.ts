@@ -65,8 +65,6 @@ async function handleExtract(
 
   return {
     action,
-    captureSnapshot: false,
-    code: [],
     waitForNetwork: false,
   };
 }

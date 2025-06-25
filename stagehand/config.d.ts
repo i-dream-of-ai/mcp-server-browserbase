@@ -70,16 +70,4 @@ export type Config = {
          */
         host?: string;
     };
-    tools?: {
-        /**
-         * Configuration for the browser_take_screenshot tool.
-         */
-        browserbase_take_screenshot?: {
-            /**
-             * Whether to disable base64-encoded image responses to the clients that
-             * don't support binary data or prefer to save on tokens.
-            */
-            omitBase64?: boolean;
-        }
-    }
 };

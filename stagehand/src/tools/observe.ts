@@ -46,8 +46,6 @@ async function handleObserve(
 
   return {
     action,
-    captureSnapshot: false,
-    code: [],
     waitForNetwork: false,
   };
 }

@@ -34,8 +34,7 @@ async function handleSSE(req: http.IncomingMessage, res: http.ServerResponse, ur
     res.on('close', () => {
       sessions.delete(transport.sessionId);
       serverList.close(server).catch(e => {
-        // eslint-disable-next-line no-console
-        // console.error(e);
+        console.error(e);
       });
     });
     return await server.connect(transport);

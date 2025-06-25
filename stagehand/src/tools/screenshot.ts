@@ -69,8 +69,6 @@ async function handleScreenshot(
 
   return {
     action,
-    captureSnapshot: false,
-    code: [],
     waitForNetwork: false,
   };
 }

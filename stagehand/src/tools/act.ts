@@ -58,8 +58,6 @@ async function handleAct(
 
   return {
     action,
-    captureSnapshot: false,
-    code: [],
     waitForNetwork: false,
   };
 }

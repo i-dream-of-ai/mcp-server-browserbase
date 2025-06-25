@@ -98,8 +98,6 @@ async function handleCreateSession(
   // Return the ToolResult structure expected by Context.run
   return {
     action: action, 
-    captureSnapshot: false, 
-    code: [],  
     waitForNetwork: false, 
   };
 }
@@ -131,8 +129,6 @@ async function handleCloseSession(
   context: Context,
   _params: CloseSessionInput
 ): Promise<ToolResult> {
-  const code = [`// Attempting to close the current Browserbase session.`];
-
   const action = async (): Promise<ToolActionResult> => {
     // Store the current session ID before it's potentially changed.
     // This allows us to reference the original session ID later if needed.
@@ -217,8 +213,6 @@ async function handleCloseSession(
 
   return {
     action: action,
-    code: code,
-    captureSnapshot: false,
     waitForNetwork: false,
   };
 }

@@ -49,8 +49,6 @@ async function handleNavigate(
 
   return {
     action,
-    captureSnapshot: false,
-    code: [],
     waitForNetwork: false,
   };
 }

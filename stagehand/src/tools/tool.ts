@@ -17,11 +17,8 @@ export type InputType = z.Schema;
 export type ToolActionResult = { content?: (ImageContent | TextContent)[] } | undefined | void;
 
 export type ToolResult = {
-  code: string[];
   action?: () => Promise<ToolActionResult>;
-  captureSnapshot: boolean;
   waitForNetwork: boolean;
-  resultOverride?: ToolActionResult;
 };
 
 export type Tool<Input extends InputType = InputType> = {
