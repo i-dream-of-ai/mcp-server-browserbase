@@ -19,6 +19,7 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 | Model Flexibility  | Supports multiple models (OpenAI, Claude, Gemini, and more) |
 | Vision Support     | Use annotated screenshots for complex DOMs                  |
 | Session Management | Create, manage, and close browser sessions                  |
+| Multi-Session      | Run multiple browser sessions in parallel                   |
 
 ### Alternative Installation Methods
 
@@ -332,6 +333,82 @@ The Browserbase MCP server provides the following tools for browser automation:
   - Output:
     - Confirmation message and session replay URL
 
+### Multi-Session Management Tools
+
+The server now supports managing multiple browser sessions in parallel, allowing you to control multiple browsers simultaneously:
+
+- **stagehand_session_create_multi**
+  - Create a new independent Stagehand browser session
+  - Inputs:
+    - `name` (string, optional): Optional name for the session
+    - `browserbaseSessionID` (string, optional): Resume an existing Browserbase session
+    - `browserbaseSessionCreateParams` (object, optional): Custom Browserbase session parameters
+  - Output:
+    - Session ID and Browserbase session ID
+
+- **stagehand_session_list**
+  - List all active Stagehand browser sessions
+  - No inputs required
+  - Output:
+    - List of active sessions with IDs, names, and metadata
+
+- **stagehand_session_close_multi**
+  - Close a specific Stagehand browser session
+  - Input:
+    - `sessionId` (string): The session ID to close
+  - Output:
+    - Confirmation message
+
+- **stagehand_navigate_session**
+  - Navigate to a URL in a specific browser session
+  - Inputs:
+    - `sessionId` (string): The session ID to use
+    - `url` (string): The URL to navigate to
+
+- **stagehand_act_session**
+  - Perform an action in a specific browser session
+  - Inputs:
+    - `sessionId` (string): The session ID to use
+    - `action` (string): The action to perform
+    - `variables` (object, optional): Variables for the action
+
+- **stagehand_extract_session**
+  - Extract information from a specific browser session
+  - Inputs:
+    - `sessionId` (string): The session ID to use
+    - `instruction` (string): What to extract
+
+- **stagehand_observe_session**
+  - Observe elements in a specific browser session
+  - Inputs:
+    - `sessionId` (string): The session ID to use
+    - `instruction` (string): What to observe
+    - `returnAction` (boolean, optional): Whether to return the action
+
+### Multi-Session Example
+
+Here's an example of using multiple browser sessions in parallel:
+
+```javascript
+// Create two sessions
+const searchSession = await createSession({ name: "Search Engine" });
+const newsSession = await createSession({ name: "News Reader" });
+
+// Navigate both sessions in parallel
+await Promise.all([
+  navigateSession(searchSession.id, "https://google.com"),
+  navigateSession(newsSession.id, "https://news.ycombinator.com")
+]);
+
+// Perform actions on both sessions
+await actSession(searchSession.id, "Search for 'AI tools'");
+const news = await extractSession(newsSession.id, "Extract top 5 headlines");
+
+// Clean up
+await closeSession(searchSession.id);
+await closeSession(newsSession.id);
+```
+
 ### Resources
 
 The server provides access to screenshot resources:
@@ -414,9 +491,10 @@ mcp-server-browserbase/
 
 This server implements the following MCP capabilities:
 
-- **Tools**: 7 tools for comprehensive browser automation
+- **Tools**: 14 tools for comprehensive browser automation
   - 5 Stagehand tools: navigate, act, extract, observe, screenshot
   - 2 Session management tools: create and close Browserbase sessions
+  - 7 Multi-session tools: create, list, close, navigate, act, extract, observe with specific sessions
 - **Prompts**: Prompt templates for common automation tasks
 - **Resources**: Screenshot resource management with URI-based access
 

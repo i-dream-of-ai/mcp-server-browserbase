@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import createServerFunction from "./index.js";
 import { ServerList } from "./server.js";
 import { startHttpTransport, startStdioTransport } from "./transport.js";
+import * as stagehandStore from "./stagehandStore.js";
 
 import { resolveConfig } from "./config.js";
 
@@ -79,6 +80,7 @@ program
 function setupExitWatchdog(serverList: ServerList) {
   const handleExit = async () => {
     setTimeout(() => process.exit(0), 15000);
+    await stagehandStore.removeAll();
     await serverList.closeAll();
     process.exit(0);
   };

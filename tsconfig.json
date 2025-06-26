@@ -12,6 +12,6 @@
     "rootDir": "src",
     "noErrorTruncation": false
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/types/types.ts"],
   "exclude": ["node_modules"]
 }
