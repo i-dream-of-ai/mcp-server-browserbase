@@ -6,7 +6,7 @@ import {
   TextContent,
   ImageContent,
 } from "@modelcontextprotocol/sdk/types.js";
-import { listResources, readResource } from "./resources.js";
+import { listResources, readResource } from "./mcp/resources.js";
 import {
   getSession,
   defaultSessionId,

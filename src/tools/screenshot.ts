@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
 import type { ToolActionResult } from "../context.js";
-import { screenshots } from "../resources.js";
+import { screenshots } from "../mcp/resources.js";
 
 const ScreenshotInputSchema = z.object({
   name: z.string().optional().describe("The name of the screenshot"),

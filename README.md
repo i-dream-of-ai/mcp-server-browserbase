@@ -335,79 +335,73 @@ The Browserbase MCP server provides the following tools for browser automation:
 
 ### Multi-Session Management Tools
 
-The server now supports managing multiple browser sessions in parallel, allowing you to control multiple browsers simultaneously:
+The server supports managing multiple independent browser sessions in parallel, allowing you to control multiple browsers simultaneously for complex automation workflows:
 
-- **stagehand_session_create_multi**
-  - Create a new independent Stagehand browser session
+#### Session Lifecycle Management
+
+- **multi-browserbase_stagehand_session_create**
+  - Create a new independent Stagehand browser session with full web automation capabilities
+  - Each session is isolated with its own browser instance, cookies, and state
   - Inputs:
-    - `name` (string, optional): Optional name for the session
-    - `browserbaseSessionID` (string, optional): Resume an existing Browserbase session
-    - `browserbaseSessionCreateParams` (object, optional): Custom Browserbase session parameters
+    - `name` (string, optional): Human-readable name for tracking (e.g., 'login-flow', 'data-scraping')
+    - `browserbaseSessionID` (string, optional): Resume an existing Browserbase session by ID
+    - `browserbaseSessionCreateParams` (object, optional): Advanced Browserbase configuration
   - Output:
-    - Session ID and Browserbase session ID
+    - Session ID and Browserbase session ID with live debugger URL
 
-- **stagehand_session_list**
-  - List all active Stagehand browser sessions
+- **browserbase_stagehand_session_list**
+  - List all currently active Stagehand browser sessions with detailed metadata
+  - Shows session IDs, names, Browserbase session IDs, creation time, and age
   - No inputs required
   - Output:
-    - List of active sessions with IDs, names, and metadata
+    - Comprehensive list of active sessions with status information
 
-- **stagehand_session_close_multi**
-  - Close a specific Stagehand browser session
+- **multi-browserbase_stagehand_session_close**
+  - Close and clean up a specific Stagehand browser session
+  - Terminates browser instance, ends Browserbase session, and frees resources
   - Input:
-    - `sessionId` (string): The session ID to close
+    - `sessionId` (string): Exact session ID to close (cannot be undone)
   - Output:
-    - Confirmation message
+    - Confirmation message with session replay URL
 
-- **stagehand_navigate_session**
+#### Session-Specific Browser Automation
+
+All core browser automation tools are available with session-specific variants:
+
+- **multi-browserbase_stagehand_navigate_session**
   - Navigate to a URL in a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
     - `url` (string): The URL to navigate to
 
-- **stagehand_act_session**
-  - Perform an action in a specific browser session
+- **multi-browserbase_stagehand_act_session**
+  - Perform an action in a specific browser session using natural language
   - Inputs:
     - `sessionId` (string): The session ID to use
-    - `action` (string): The action to perform
-    - `variables` (object, optional): Variables for the action
+    - `action` (string): The action to perform (e.g., "click the login button")
+    - `variables` (object, optional): Variables for sensitive data in action templates
 
-- **stagehand_extract_session**
-  - Extract information from a specific browser session
+- **multi-browserbase_stagehand_extract_session**
+  - Extract structured information from a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
-    - `instruction` (string): What to extract
+    - `instruction` (string): What to extract from the page
 
-- **stagehand_observe_session**
-  - Observe elements in a specific browser session
+- **multi-browserbase_stagehand_observe_session**
+  - Observe and find actionable elements in a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
-    - `instruction` (string): What to observe
-    - `returnAction` (boolean, optional): Whether to return the action
+    - `instruction` (string): What to observe (e.g., "find the login button")
+    - `returnAction` (boolean, optional): Whether to return the action to perform
 
-### Multi-Session Example
+#### Multi-Session Use Cases
 
-Here's an example of using multiple browser sessions in parallel:
-
-```javascript
-// Create two sessions
-const searchSession = await createSession({ name: "Search Engine" });
-const newsSession = await createSession({ name: "News Reader" });
-
-// Navigate both sessions in parallel
-await Promise.all([
-  navigateSession(searchSession.id, "https://google.com"),
-  navigateSession(newsSession.id, "https://news.ycombinator.com")
-]);
-
-// Perform actions on both sessions
-await actSession(searchSession.id, "Search for 'AI tools'");
-const news = await extractSession(newsSession.id, "Extract top 5 headlines");
-
-// Clean up
-await closeSession(searchSession.id);
-await closeSession(newsSession.id);
-```
+- **Parallel Data Collection**: Run multiple scraping sessions simultaneously across different websites
+- **A/B Testing**: Compare user flows across different browser sessions with varying configurations
+- **Authentication Workflows**: Maintain separate authenticated sessions for different user accounts
+- **Cross-Site Operations**: Perform coordinated actions across multiple websites or applications
+- **Load Testing**: Simulate multiple users interacting with web applications concurrently
+- **Backup Sessions**: Keep fallback sessions ready in case primary sessions encounter issues
 
 ### Resources
 
@@ -425,21 +419,26 @@ mcp-server-browserbase/
 │   ├── config.ts                 # Configuration management and CLI parsing
 │   ├── context.ts                # Context class managing Stagehand instances
 │   ├── sessionManager.ts         # Browserbase session lifecycle management
+│   ├── stagehandStore.ts         # Multi-session store for managing parallel browser sessions
 │   ├── program.ts                # CLI program setup using Commander.js
 │   ├── transport.ts              # HTTP/SSE and STDIO transport handlers
 │   ├── server.ts                 # Server list management
-│   ├── resources.ts              # Screenshot resource management
-│   ├── prompts.ts                # Prompt templates for MCP clients
 │   ├── utils.ts                  # Utility functions
-│   └── tools/                    # Tool definitions and implementations
-│       ├── act.ts                # Stagehand action execution tool
-│       ├── extract.ts            # Page content extraction tool
-│       ├── navigate.ts           # URL navigation tool
-│       ├── observe.ts            # Element observation tool
-│       ├── screenshot.ts         # Screenshot capture tool
-│       ├── session.ts            # Session management tools
-│       ├── tool.ts               # Tool type definitions
-│       └── utils.ts              # Tool utility functions
+│   ├── mcp/                      # MCP protocol implementations
+│   │   ├── prompts.ts            # Prompt templates and handlers for MCP clients
+│   │   └── resources.ts          # Resource management (screenshots) with URI-based access
+│   ├── tools/                    # Tool definitions and implementations
+│   │   ├── act.ts                # Stagehand action execution tool
+│   │   ├── extract.ts            # Page content extraction tool
+│   │   ├── navigate.ts           # URL navigation tool
+│   │   ├── observe.ts            # Element observation tool
+│   │   ├── screenshot.ts         # Screenshot capture tool
+│   │   ├── session.ts            # Single session management tools
+│   │   ├── multiSession.ts       # Multi-session management and session-aware tools
+│   │   ├── tool.ts               # Tool type definitions and interfaces
+│   │   └── index.ts              # Tool exports and registration
+│   └── types/                    # TypeScript type definitions
+│       └── types.ts              # Shared type definitions for sessions and configurations
 ├── dist/                         # Compiled JavaScript output
 ├── assets/                       # Images and documentation assets
 ├── cli.js                        # Executable entry point for CLI usage
@@ -471,13 +470,24 @@ mcp-server-browserbase/
 
 **server.ts** - Server list management providing factory patterns for server creation and handling multiple concurrent connections.
 
-### Tools & Resources
+**stagehandStore.ts** - Multi-session store managing parallel browser sessions with lifecycle tracking, automatic cleanup, and session metadata.
 
-**tools/** - Individual tool implementations with type-safe schemas including browser automation (navigate, act, extract, observe, screenshot) and session management tools.
+### MCP Protocol Specifics Implementation
 
-**resources.ts** - Screenshot resource management with in-memory storage, URI resolution, and base64-encoded PNG data serving.
+**mcp/prompts.ts** - Prompt template definitions and handlers implementing the MCP prompts specification with argument substitution.
 
-**prompts.ts** - Prompt template definitions and retrieval system for MCP clients.
+**mcp/resources.ts** - Resource management implementing the MCP resources specification, handling screenshot storage, URI resolution, and base64-encoded data serving.
+
+### Tools & Types
+
+**tools/** - Individual tool implementations with type-safe Zod schemas including:
+- Core browser automation tools (navigate, act, extract, observe, screenshot)
+- Single session management tools (session.ts)
+- Multi-session management and session-aware tool variants (multiSession.ts)
+- Tool type definitions and interfaces (tool.ts)
+- Centralized tool exports and registration (index.ts)
+
+**types/types.ts** - Shared TypeScript type definitions for sessions, configurations, and MCP protocol structures.
 
 **utils.ts** - Message sanitization utilities ensuring proper JSON formatting for MCP messages.
 
@@ -492,22 +502,38 @@ mcp-server-browserbase/
 This server implements the following MCP capabilities:
 
 - **Tools**: 14 tools for comprehensive browser automation
-  - 5 Stagehand tools: navigate, act, extract, observe, screenshot
-  - 2 Session management tools: create and close Browserbase sessions
+  - 5 Core Stagehand tools: navigate, act, extract, observe, screenshot
+  - 2 Single-session management tools: create and close Browserbase sessions
   - 7 Multi-session tools: create, list, close, navigate, act, extract, observe with specific sessions
 - **Prompts**: Prompt templates for common automation tasks
 - **Resources**: Screenshot resource management with URI-based access
+
+### Session Management Architecture
+
+The server supports two session management approaches:
+
+1. **Single Session Mode**: Traditional approach with one active browser session
+   - Tools: `browserbase_session_create`, `browserbase_session_close`
+   - Simpler for basic automation tasks
+   - Automatically manages the active session
+
+2. **Multi-Session Mode**: Advanced approach with multiple parallel browser sessions
+   - Tools: `multi-browserbase_stagehand_session_create`, `multi-browserbase_stagehand_session_close`, `browserbase_stagehand_session_list`
+   - Session-specific variants of all core tools (with `_session` suffix)
+   - Ideal for complex workflows requiring parallel browser instances
+   - Each session maintains independent state, cookies, and browser context
 
 ## Key Features
 
 - **AI-Powered Automation**: Natural language commands for web interactions
 - **Multi-Model Support**: Works with OpenAI, Claude, Gemini, and more
-- **Session Management**: Create, manage, and persist browser sessions
+- **Advanced Session Management**: Single and multi-session support for parallel browser automation
 - **Screenshot Capture**: Full-page and element-specific screenshots
 - **Data Extraction**: Intelligent content extraction from web pages
 - **Proxy Support**: Enterprise-grade proxy capabilities
 - **Stealth Mode**: Advanced anti-detection features
 - **Context Persistence**: Maintain authentication and state across sessions
+- **Parallel Workflows**: Run multiple browser sessions simultaneously for complex automation tasks
 
 For more information about the Model Context Protocol, visit:
 

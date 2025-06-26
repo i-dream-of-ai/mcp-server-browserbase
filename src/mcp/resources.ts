@@ -1,5 +1,5 @@
 /**
- * Resources module for the Stagehand MCP server
+ * Resources module for the Browserbase MCP server
  * Contains resources definitions and handlers for resource-related requests
  * Docs: https://modelcontextprotocol.io/docs/concepts/resources
  */

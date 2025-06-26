@@ -3,13 +3,15 @@ dotenv.config();
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { Tool, InputType } from "./tools/tool.js";
+import type { Tool } from "./tools/tool.js";
 
 import { Context } from "./context.js";
 import type { Config } from "../config.js";
 import { TOOLS } from "./tools/index.js";
 import { AvailableModelSchema } from "@browserbasehq/stagehand";
-import { PROMPTS, getPrompt } from "./prompts.js";
+import { PROMPTS, getPrompt } from "./mcp/prompts.js";
+import { RESOURCE_TEMPLATES } from "./mcp/resources.js";
+
 import {
   ListResourcesRequestSchema,
   ReadResourceRequestSchema,
@@ -99,6 +101,8 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
   const server = new McpServer({
     name: "Browserbase MCP Server",
     version: "2.0.0",
+    description:
+      "Cloud browser automation server powered by Browserbase and Stagehand. Enables LLMs to navigate websites, interact with elements, extract data, and capture screenshots using natural language commands.",
     capabilities: {
       resources: {
         subscribe: true,
@@ -107,6 +111,7 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
       prompts: {
         listChanged: true,
       },
+      sampling: {},
     },
   });
 
@@ -123,6 +128,7 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
     prompts: {
       listChanged: true,
     },
+    sampling: {},
   });
 
   // Add resource handlers
@@ -140,7 +146,7 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
   server.server.setRequestHandler(
     ListResourceTemplatesRequestSchema,
     async () => {
-      return { resourceTemplates: [] };
+      return { resourceTemplates: RESOURCE_TEMPLATES };
     },
   );
 

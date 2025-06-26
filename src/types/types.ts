@@ -2,8 +2,8 @@ import { Stagehand } from "@browserbasehq/stagehand";
 import { Browser, Page } from "playwright-core";
 
 export type StagehandSession = {
-  id: string;                     // MCP-side ID
-  stagehand: Stagehand;          // owns the Browserbase session
+  id: string; // MCP-side ID
+  stagehand: Stagehand; // owns the Browserbase session
   page: Page;
   browser: Browser;
   created: number;
@@ -17,4 +17,4 @@ export type CreateSessionParams = {
   browserbaseSessionID?: string;
   browserbaseSessionCreateParams?: any;
   meta?: Record<string, any>;
-}; 
+};

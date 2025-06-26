@@ -9,8 +9,8 @@ export const PROMPTS = [
   {
     name: "click_search_button",
     description: "A prompt template for clicking on a search button",
-    arguments: [], // No arguments required for this specific prompt
-  },
+    arguments: [] // No arguments required for this specific prompt
+  }
 ];
 
 /**
@@ -21,19 +21,18 @@ export const PROMPTS = [
 export function getPrompt(name: string) {
   if (name === "click_search_button") {
     return {
-      description:
-        "This prompt provides instructions for clicking on a search button",
+      description: "This prompt provides instructions for clicking on a search button",
       messages: [
         {
           role: "user",
           content: {
             type: "text",
-            text: "Please click on the search button",
-          },
-        },
-      ],
+            text: "Please click on the search button"
+          }
+        }
+      ]
     };
   }
-
+  
   throw new Error(`Invalid prompt name: ${name}`);
-}
+} 

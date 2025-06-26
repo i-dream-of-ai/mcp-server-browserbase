@@ -12,14 +12,14 @@ const store = new Map<string, StagehandSession>();
  */
 export const create = async (
   config: Config,
-  params: CreateSessionParams = {}
+  params: CreateSessionParams = {},
 ): Promise<StagehandSession> => {
   const id = randomUUID();
-  
+
   // Merge config with params
   const apiKey = params.apiKey || config.browserbaseApiKey;
   const projectId = params.projectId || config.browserbaseProjectId;
-  
+
   if (!apiKey || !projectId) {
     throw new Error("Browserbase API Key and Project ID are required");
   }
@@ -30,11 +30,15 @@ export const create = async (
     env: "BROWSERBASE",
     apiKey,
     projectId,
-    modelName: (params.modelName || config.modelName || "google/gemini-2.0-flash") as AvailableModel,
+    modelName: (params.modelName ||
+      config.modelName ||
+      "google/gemini-2.0-flash") as AvailableModel,
     modelClientOptions: {
-      apiKey: process.env.GEMINI_API_KEY, //TODO: 
+      apiKey: process.env.GEMINI_API_KEY, //TODO:
     },
-    ...(params.browserbaseSessionID && { browserbaseSessionID: params.browserbaseSessionID }),
+    ...(params.browserbaseSessionID && {
+      browserbaseSessionID: params.browserbaseSessionID,
+    }),
     browserbaseSessionCreateParams: params.browserbaseSessionCreateParams || {
       projectId,
       proxies: config.proxies,
@@ -81,10 +85,10 @@ export const create = async (
   store.set(id, session);
 
   process.stderr.write(
-    `[StagehandStore] Session created: ${id} (BB: ${stagehand.browserbaseSessionID})\n`
+    `[StagehandStore] Session created: ${id} (BB: ${stagehand.browserbaseSessionID})\n`,
   );
   process.stderr.write(
-    `[StagehandStore] Live debugger: https://www.browserbase.com/sessions/${stagehand.browserbaseSessionID}\n`
+    `[StagehandStore] Live debugger: https://www.browserbase.com/sessions/${stagehand.browserbaseSessionID}\n`,
   );
 
   // Set up disconnect handler
@@ -116,12 +120,14 @@ export const list = (): StagehandSession[] => {
 export const remove = async (id: string): Promise<void> => {
   const session = store.get(id);
   if (!session) {
-    process.stderr.write(`[StagehandStore] Session not found for removal: ${id}\n`);
+    process.stderr.write(
+      `[StagehandStore] Session not found for removal: ${id}\n`,
+    );
     return;
   }
 
   process.stderr.write(`[StagehandStore] Removing session: ${id}\n`);
-  
+
   try {
     await session.stagehand.close();
     process.stderr.write(`[StagehandStore] Session closed: ${id}\n`);
@@ -129,7 +135,7 @@ export const remove = async (id: string): Promise<void> => {
     process.stderr.write(
       `[StagehandStore] Error closing session ${id}: ${
         error instanceof Error ? error.message : String(error)
-      }\n`
+      }\n`,
     );
   }
 
@@ -140,8 +146,10 @@ export const remove = async (id: string): Promise<void> => {
  * Remove all sessions
  */
 export const removeAll = async (): Promise<void> => {
-  process.stderr.write(`[StagehandStore] Removing all ${store.size} sessions...\n`);
-  await Promise.all(list().map(s => remove(s.id)));
+  process.stderr.write(
+    `[StagehandStore] Removing all ${store.size} sessions...\n`,
+  );
+  await Promise.all(list().map((s) => remove(s.id)));
   process.stderr.write(`[StagehandStore] All sessions removed\n`);
 };
 
@@ -150,4 +158,4 @@ export const removeAll = async (): Promise<void> => {
  */
 export const size = (): number => {
   return store.size;
-}; 
+};
