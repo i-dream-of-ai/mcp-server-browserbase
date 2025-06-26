@@ -5,7 +5,7 @@ import type { ToolActionResult } from "../context.js";
 import { screenshots } from "../resources.js";
 
 const ScreenshotInputSchema = z.object({
-  random_string: z.string().optional().describe("Dummy parameter for no-parameter tools"),
+  name: z.string().optional().describe("The name of the screenshot"),
 });
 
 type ScreenshotInput = z.infer<typeof ScreenshotInputSchema>;
@@ -34,7 +34,11 @@ async function handleScreenshot(
 
       // Convert buffer to base64 string and store in memory
       const screenshotBase64 = screenshotBuffer.toString("base64");
-      const name = `screenshot-${new Date()
+      const name = 
+      `screenshot-${params.name}-${new Date()
+        .toISOString()
+        .replace(/:/g, "-")}` || 
+      `screenshot-${new Date()
         .toISOString()
         .replace(/:/g, "-")}`;
       screenshots.set(name, screenshotBase64);

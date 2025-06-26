@@ -6,7 +6,6 @@ import { AvailableModel, Stagehand } from "@browserbasehq/stagehand";
 import type { Config } from "../config.js"; 
 import type { Cookie } from "playwright-core";
 
-// Define the type for a session object
 export type BrowserSession = {
   browser: Browser;
   page: Page;
