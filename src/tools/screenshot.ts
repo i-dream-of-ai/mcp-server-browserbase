@@ -11,7 +11,7 @@ const ScreenshotInputSchema = z.object({
 type ScreenshotInput = z.infer<typeof ScreenshotInputSchema>;
 
 const screenshotSchema: ToolSchema<typeof ScreenshotInputSchema> = {
-  name: "screenshot",
+  name: "browserbase_screenshot",
   description:
     "Takes a screenshot of the current page. Use this tool to learn where you are on the page when controlling the browser with Stagehand. Only use this tool when the other tools are not sufficient to get the information you need.",
   inputSchema: ScreenshotInputSchema,
@@ -19,7 +19,7 @@ const screenshotSchema: ToolSchema<typeof ScreenshotInputSchema> = {
 
 async function handleScreenshot(
   context: Context,
-  params: ScreenshotInput
+  params: ScreenshotInput,
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
@@ -34,13 +34,11 @@ async function handleScreenshot(
 
       // Convert buffer to base64 string and store in memory
       const screenshotBase64 = screenshotBuffer.toString("base64");
-      const name = 
-      `screenshot-${params.name}-${new Date()
-        .toISOString()
-        .replace(/:/g, "-")}` || 
-      `screenshot-${new Date()
-        .toISOString()
-        .replace(/:/g, "-")}`;
+      const name = params.name
+        ? `screenshot-${params.name}-${new Date()
+            .toISOString()
+            .replace(/:/g, "-")}`
+        : `screenshot-${new Date().toISOString().replace(/:/g, "-")}`;
       screenshots.set(name, screenshotBase64);
 
       // Notify the client that the resources changed
@@ -83,4 +81,4 @@ const screenshotTool: Tool<typeof ScreenshotInputSchema> = {
   handle: handleScreenshot,
 };
 
-export default screenshotTool; 
+export default screenshotTool;

@@ -10,7 +10,7 @@ const NavigateInputSchema = z.object({
 type NavigateInput = z.infer<typeof NavigateInputSchema>;
 
 const navigateSchema: ToolSchema<typeof NavigateInputSchema> = {
-  name: "stagehand_navigate",
+  name: "browserbase_stagehand_navigate",
   description:
     "Navigate to a URL in the browser. Only use this tool with URLs you're confident will work and stay up to date. Otheriwse use https://google.com as the starting point",
   inputSchema: NavigateInputSchema,
@@ -18,7 +18,7 @@ const navigateSchema: ToolSchema<typeof NavigateInputSchema> = {
 
 async function handleNavigate(
   context: Context,
-  params: NavigateInput
+  params: NavigateInput,
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
@@ -27,7 +27,7 @@ async function handleNavigate(
         throw new Error("No active page available");
       }
       await page.goto(params.url, { waitUntil: "domcontentloaded" });
-      
+
       return {
         content: [
           {
@@ -58,4 +58,4 @@ const navigateTool: Tool<typeof NavigateInputSchema> = {
   handle: handleNavigate,
 };
 
-export default navigateTool; 
+export default navigateTool;

@@ -4,26 +4,31 @@ import type { Context } from "../context.js";
 import type { ToolActionResult } from "../context.js";
 
 const ObserveInputSchema = z.object({
-  instruction: z.string().describe(
-    "Detailed instruction for what specific elements or components to observe on the web page. " +
-    "This instruction must be extremely specific and descriptive. For example: 'Find the red login button " +
-    "in the top right corner', 'Locate the search input field with placeholder text', or 'Identify all " +
-    "clickable product cards on the page'. The more specific and detailed your instruction, the better " +
-    "the observation results will be. Avoid generic instructions like 'find buttons' or 'see elements'. " +
-    "Instead, describe the visual characteristics, location, text content, or functionality of the elements " +
-    "you want to observe. This tool is designed to help you identify interactive elements that you can " +
-    "later use with the act tool for performing actions like clicking, typing, or form submission."
-  ),
-  returnAction: z.boolean().optional().describe(
-    "Whether to return the action to perform on the element. If true, the action will be returned as a string. " +
-    "If false, the action will not be returned."
-  ),
+  instruction: z
+    .string()
+    .describe(
+      "Detailed instruction for what specific elements or components to observe on the web page. " +
+        "This instruction must be extremely specific and descriptive. For example: 'Find the red login button " +
+        "in the top right corner', 'Locate the search input field with placeholder text', or 'Identify all " +
+        "clickable product cards on the page'. The more specific and detailed your instruction, the better " +
+        "the observation results will be. Avoid generic instructions like 'find buttons' or 'see elements'. " +
+        "Instead, describe the visual characteristics, location, text content, or functionality of the elements " +
+        "you want to observe. This tool is designed to help you identify interactive elements that you can " +
+        "later use with the act tool for performing actions like clicking, typing, or form submission.",
+    ),
+  returnAction: z
+    .boolean()
+    .optional()
+    .describe(
+      "Whether to return the action to perform on the element. If true, the action will be returned as a string. " +
+        "If false, the action will not be returned.",
+    ),
 });
 
 type ObserveInput = z.infer<typeof ObserveInputSchema>;
 
 const observeSchema: ToolSchema<typeof ObserveInputSchema> = {
-  name: "stagehand_observe",
+  name: "browserbase_stagehand_observe",
   description:
     "Observes and identifies specific interactive elements on the current web page that can be used for subsequent actions. " +
     "This tool is specifically designed for finding actionable (interactable) elements such as buttons, links, form fields, " +
@@ -38,7 +43,7 @@ const observeSchema: ToolSchema<typeof ObserveInputSchema> = {
 
 async function handleObserve(
   context: Context,
-  params: ObserveInput
+  params: ObserveInput,
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
@@ -75,4 +80,4 @@ const observeTool: Tool<typeof ObserveInputSchema> = {
   handle: handleObserve,
 };
 
-export default observeTool; 
+export default observeTool;

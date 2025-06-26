@@ -1,9 +1,6 @@
-import {
-  Browser,
-  Page,
-} from "playwright-core";
+import { Browser, Page } from "playwright-core";
 import { AvailableModel, Stagehand } from "@browserbasehq/stagehand";
-import type { Config } from "../config.js"; 
+import type { Config } from "../config.js";
 import type { Cookie } from "playwright-core";
 
 export type BrowserSession = {
@@ -34,7 +31,7 @@ export function setActiveSessionId(id: string): void {
     activeSessionId = id;
   } else {
     process.stderr.write(
-      `[SessionManager] WARN - Set active session failed for non-existent ID: ${id}\n`
+      `[SessionManager] WARN - Set active session failed for non-existent ID: ${id}\n`,
     );
   }
 }
@@ -52,20 +49,27 @@ export function getActiveSessionId(): string {
  * @param context Playwright browser context
  * @param cookies Array of cookies to add
  */
-export async function addCookiesToContext(context: any, cookies: Cookie[]): Promise<void> {
+export async function addCookiesToContext(
+  context: any,
+  cookies: Cookie[],
+): Promise<void> {
   if (!cookies || cookies.length === 0) {
     return;
   }
-  
+
   try {
-    process.stderr.write(`[SessionManager] Adding ${cookies.length} cookies to browser context\n`);
+    process.stderr.write(
+      `[SessionManager] Adding ${cookies.length} cookies to browser context\n`,
+    );
     await context.addCookies(cookies);
-    process.stderr.write(`[SessionManager] Successfully added cookies to browser context\n`);
+    process.stderr.write(
+      `[SessionManager] Successfully added cookies to browser context\n`,
+    );
   } catch (error) {
     process.stderr.write(
       `[SessionManager] Error adding cookies to browser context: ${
         error instanceof Error ? error.message : String(error)
-      }\n`
+      }\n`,
     );
   }
 }
@@ -74,7 +78,7 @@ export async function addCookiesToContext(context: any, cookies: Cookie[]): Prom
 export async function createNewBrowserSession(
   newSessionId: string,
   config: Config,
-  resumeSessionId?: string
+  resumeSessionId?: string,
 ): Promise<BrowserSession> {
   if (!config.browserbaseApiKey) {
     throw new Error("Browserbase API Key is missing in the configuration.");
@@ -85,18 +89,19 @@ export async function createNewBrowserSession(
 
   try {
     process.stderr.write(
-      `[SessionManager] ${resumeSessionId ? 'Resuming' : 'Creating'} Stagehand session ${newSessionId}...\n`
+      `[SessionManager] ${resumeSessionId ? "Resuming" : "Creating"} Stagehand session ${newSessionId}...\n`,
     );
-    
+
     // Create and initialize Stagehand instance
     const stagehand = new Stagehand({
       env: "BROWSERBASE",
       apiKey: config.browserbaseApiKey,
       projectId: config.browserbaseProjectId,
-      modelName: (config.modelName || "google/gemini-2.0-flash") as AvailableModel,
+      modelName: (config.modelName ||
+        "google/gemini-2.0-flash") as AvailableModel,
       modelClientOptions: {
         apiKey: process.env.GEMINI_API_KEY, // TODO: change this in prod to just use our key
-      }, 
+      },
       ...(resumeSessionId && { browserbaseSessionID: resumeSessionId }),
       browserbaseSessionCreateParams: {
         projectId: config.browserbaseProjectId!,
@@ -106,10 +111,12 @@ export async function createNewBrowserSession(
             width: config.viewPort?.browserWidth ?? 1024,
             height: config.viewPort?.browserHeight ?? 768,
           },
-          context: config.context?.contextId ? {
-            id: config.context?.contextId,
-            persist: config.context?.persist ?? true,
-          } : undefined,
+          context: config.context?.contextId
+            ? {
+                id: config.context?.contextId,
+                persist: config.context?.persist ?? true,
+              }
+            : undefined,
           advancedStealth: config.advancedStealth ?? undefined,
         },
       },
@@ -117,24 +124,24 @@ export async function createNewBrowserSession(
         console.error(`Stagehand[${newSessionId}]: ${logLine.message}`);
       },
     });
-    
+
     await stagehand.init();
-    
+
     // Get the page and browser from Stagehand
     const page = stagehand.page as unknown as Page;
     const browser = page.context().browser();
-    
+
     if (!browser) {
       throw new Error("Failed to get browser from Stagehand page context");
     }
-    
+
     const browserbaseSessionId = stagehand.browserbaseSessionID;
-    
+
     process.stderr.write(
-      `[SessionManager] Stagehand initialized with Browserbase session: ${browserbaseSessionId}\n`
+      `[SessionManager] Stagehand initialized with Browserbase session: ${browserbaseSessionId}\n`,
     );
     process.stderr.write(
-      `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${browserbaseSessionId}\n`
+      `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${browserbaseSessionId}\n`,
     );
 
     // Set up disconnect handler
@@ -143,7 +150,7 @@ export async function createNewBrowserSession(
       browsers.delete(newSessionId);
       if (defaultBrowserSession && defaultBrowserSession.browser === browser) {
         process.stderr.write(
-          `[SessionManager] Disconnected (default): ${newSessionId}\n`
+          `[SessionManager] Disconnected (default): ${newSessionId}\n`,
         );
         defaultBrowserSession = null;
       }
@@ -152,21 +159,25 @@ export async function createNewBrowserSession(
         newSessionId !== defaultSessionId
       ) {
         process.stderr.write(
-          `[SessionManager] WARN - Active session disconnected, resetting to default: ${newSessionId}\n`
+          `[SessionManager] WARN - Active session disconnected, resetting to default: ${newSessionId}\n`,
         );
         setActiveSessionId(defaultSessionId);
       }
     });
-    
+
     // Add cookies to the context if they are provided in the config
-    if (config.cookies && Array.isArray(config.cookies) && config.cookies.length > 0) {
+    if (
+      config.cookies &&
+      Array.isArray(config.cookies) &&
+      config.cookies.length > 0
+    ) {
       await addCookiesToContext(page.context(), config.cookies);
     }
 
     const sessionObj: BrowserSession = {
       browser,
       page,
-      sessionId: browserbaseSessionId!, 
+      sessionId: browserbaseSessionId!,
       stagehand,
     };
 
@@ -178,7 +189,7 @@ export async function createNewBrowserSession(
 
     setActiveSessionId(newSessionId);
     process.stderr.write(
-      `[SessionManager] Session created and active: ${newSessionId}\n`
+      `[SessionManager] Session created and active: ${newSessionId}\n`,
     );
 
     return sessionObj;
@@ -188,33 +199,33 @@ export async function createNewBrowserSession(
         ? creationError.message
         : String(creationError);
     process.stderr.write(
-      `[SessionManager] Creating session ${newSessionId} failed: ${errorMessage}\n`
-    ); 
+      `[SessionManager] Creating session ${newSessionId} failed: ${errorMessage}\n`,
+    );
     throw new Error(
-      `Failed to create/connect session ${newSessionId}: ${errorMessage}`
+      `Failed to create/connect session ${newSessionId}: ${errorMessage}`,
     );
   }
 }
 
 async function closeBrowserGracefully(
   session: BrowserSession | undefined | null,
-  sessionIdToLog: string
+  sessionIdToLog: string,
 ): Promise<void> {
   // Close Stagehand instance which handles browser cleanup
   if (session?.stagehand) {
     try {
       process.stderr.write(
-        `[SessionManager] Closing Stagehand for session: ${sessionIdToLog}\n`
+        `[SessionManager] Closing Stagehand for session: ${sessionIdToLog}\n`,
       );
       await session.stagehand.close();
       process.stderr.write(
-        `[SessionManager] Successfully closed Stagehand and browser for session: ${sessionIdToLog}\n`
+        `[SessionManager] Successfully closed Stagehand and browser for session: ${sessionIdToLog}\n`,
       );
     } catch (closeError) {
       process.stderr.write(
         `[SessionManager] WARN - Error closing Stagehand for session ${sessionIdToLog}: ${
           closeError instanceof Error ? closeError.message : String(closeError)
-        }\n`
+        }\n`,
       );
     }
   }
@@ -222,7 +233,7 @@ async function closeBrowserGracefully(
 
 // Internal function to ensure default session
 export async function ensureDefaultSessionInternal(
-  config: Config
+  config: Config,
 ): Promise<BrowserSession> {
   const sessionId = defaultSessionId;
   let needsRecreation = false;
@@ -230,7 +241,7 @@ export async function ensureDefaultSessionInternal(
   if (!defaultBrowserSession) {
     needsRecreation = true;
     process.stderr.write(
-      `[SessionManager] Default session ${sessionId} not found, creating.\n`
+      `[SessionManager] Default session ${sessionId} not found, creating.\n`,
     );
   } else if (
     !defaultBrowserSession.browser.isConnected() ||
@@ -238,7 +249,7 @@ export async function ensureDefaultSessionInternal(
   ) {
     needsRecreation = true;
     process.stderr.write(
-      `[SessionManager] Default session ${sessionId} is stale, recreating.\n`
+      `[SessionManager] Default session ${sessionId} is stale, recreating.\n`,
     );
     await closeBrowserGracefully(defaultBrowserSession, sessionId);
     defaultBrowserSession = null;
@@ -249,30 +260,33 @@ export async function ensureDefaultSessionInternal(
     try {
       defaultBrowserSession = await createNewBrowserSession(sessionId, config);
       return defaultBrowserSession;
-    } catch (error) {
+    } catch (creationError) {
       // Error during initial creation or recreation
       process.stderr.write(
         `[SessionManager] Initial/Recreation attempt for default session ${sessionId} failed. Error: ${
-          error instanceof Error ? error.message : String(error)
-        }\n`
+          creationError instanceof Error
+            ? creationError.message
+            : String(creationError)
+        }\n`,
       );
       // Attempt one more time after a failure
       process.stderr.write(
-        `[SessionManager] Retrying creation of default session ${sessionId} after error...\n`
+        `[SessionManager] Retrying creation of default session ${sessionId} after error...\n`,
       );
       try {
-        defaultBrowserSession = await createNewBrowserSession(sessionId, config);
+        defaultBrowserSession = await createNewBrowserSession(
+          sessionId,
+          config,
+        );
         return defaultBrowserSession;
       } catch (retryError) {
         const finalErrorMessage =
-          retryError instanceof Error
-            ? retryError.message
-            : String(retryError);
+          retryError instanceof Error ? retryError.message : String(retryError);
         process.stderr.write(
-          `[SessionManager] Failed to recreate default session ${sessionId} after retry: ${finalErrorMessage}\n`
+          `[SessionManager] Failed to recreate default session ${sessionId} after retry: ${finalErrorMessage}\n`,
         );
         throw new Error(
-          `Failed to ensure default session ${sessionId} after initial error and retry: ${finalErrorMessage}`
+          `Failed to ensure default session ${sessionId} after initial error and retry: ${finalErrorMessage}`,
         );
       }
     }
@@ -287,14 +301,14 @@ export async function ensureDefaultSessionInternal(
 export async function getSession(
   sessionId: string,
   config: Config,
-  createIfMissing: boolean = true
+  createIfMissing: boolean = true,
 ): Promise<BrowserSession | null> {
   if (sessionId === defaultSessionId && createIfMissing) {
     try {
       return await ensureDefaultSessionInternal(config);
     } catch (error) {
       process.stderr.write(
-        `[SessionManager] Failed to get default session due to error in ensureDefaultSessionInternal for ${sessionId}. See previous messages for details.\n`
+        `[SessionManager] Failed to get default session due to error in ensureDefaultSessionInternal for ${sessionId}. See previous messages for details.\n`,
       );
       return null; // Or rethrow if getSession failing for default is critical
     }
@@ -302,11 +316,11 @@ export async function getSession(
 
   // For non-default sessions
   process.stderr.write(`[SessionManager] Getting session: ${sessionId}\n`);
-  let sessionObj = browsers.get(sessionId);
+  const sessionObj = browsers.get(sessionId);
 
   if (!sessionObj) {
     process.stderr.write(
-      `[SessionManager] WARN - Session not found in map: ${sessionId}\n`
+      `[SessionManager] WARN - Session not found in map: ${sessionId}\n`,
     );
     return null;
   }
@@ -314,13 +328,13 @@ export async function getSession(
   // Validate the found session
   if (!sessionObj.browser.isConnected() || sessionObj.page.isClosed()) {
     process.stderr.write(
-      `[SessionManager] WARN - Found session ${sessionId} is stale, removing.\n`
+      `[SessionManager] WARN - Found session ${sessionId} is stale, removing.\n`,
     );
     await closeBrowserGracefully(sessionObj, sessionId);
     browsers.delete(sessionId);
     if (activeSessionId === sessionId) {
       process.stderr.write(
-        `[SessionManager] WARN - Invalidated active session ${sessionId}, resetting to default.\n`
+        `[SessionManager] WARN - Invalidated active session ${sessionId}, resetting to default.\n`,
       );
       setActiveSessionId(defaultSessionId);
     }
@@ -339,22 +353,20 @@ export async function getSession(
  * @param sessionId The session ID to clean up
  */
 export function cleanupSession(sessionId: string): void {
-  process.stderr.write(
-    `[SessionManager] Cleaning up session: ${sessionId}\n`
-  );
-  
+  process.stderr.write(`[SessionManager] Cleaning up session: ${sessionId}\n`);
+
   // Remove from browsers map
   browsers.delete(sessionId);
-  
+
   // Clear default session reference if this was the default
   if (sessionId === defaultSessionId && defaultBrowserSession) {
     defaultBrowserSession = null;
   }
-  
+
   // Reset active session to default if this was the active one
   if (activeSessionId === sessionId) {
     process.stderr.write(
-      `[SessionManager] Cleaned up active session ${sessionId}, resetting to default.\n`
+      `[SessionManager] Cleaned up active session ${sessionId}, resetting to default.\n`,
     );
     setActiveSessionId(defaultSessionId);
   }
@@ -368,15 +380,15 @@ export async function closeAllSessions(): Promise<void> {
     process.stderr.write(`[SessionManager] Closing session: ${id}\n`);
     closePromises.push(
       // Use the helper for consistent logging/error handling
-      closeBrowserGracefully(session, id)
+      closeBrowserGracefully(session, id),
     );
   }
   try {
     await Promise.all(closePromises);
-  } catch(e) {
+  } catch (_e) {
     // Individual errors are caught and logged by closeBrowserGracefully
     process.stderr.write(
-      `[SessionManager] WARN - Some errors occurred during batch session closing. See individual messages.\n`
+      `[SessionManager] WARN - Some errors occurred during batch session closing. See individual messages.\n`,
     );
   }
 

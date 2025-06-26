@@ -1,7 +1,7 @@
 import { z } from "zod";
-import type { Tool, ToolSchema, ToolResult } from "./tool.js"; 
-import type { Context } from "../context.js"; 
-import type { ToolActionResult } from "../context.js"; 
+import type { Tool, ToolSchema, ToolResult } from "./tool.js";
+import type { Context } from "../context.js";
+import type { ToolActionResult } from "../context.js";
 
 // Import SessionManager functions
 import {
@@ -20,23 +20,22 @@ const CreateSessionInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      "Optional session ID to use/reuse. If not provided or invalid, a new session is created."
+      "Optional session ID to use/reuse. If not provided or invalid, a new session is created.",
     ),
 });
 type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 
 const createSessionSchema: ToolSchema<typeof CreateSessionInputSchema> = {
-  name: "browserbase_session_create", 
+  name: "browserbase_session_create",
   description:
-    "Create or reuse a cloud browser session using Browserbase with fully initialized Stagehand. This creates the browser session with all configuration flags (proxies, stealth, viewport, cookies, etc.) and initializes Stagehand to work with that session. Updates the active session.", 
+    "Create or reuse a cloud browser session using Browserbase with fully initialized Stagehand. This creates the browser session with all configuration flags (proxies, stealth, viewport, cookies, etc.) and initializes Stagehand to work with that session. Updates the active session.",
   inputSchema: CreateSessionInputSchema,
 };
-
 
 // Handle function for CreateSession using SessionManager
 async function handleCreateSession(
   context: Context,
-  params: CreateSessionInput
+  params: CreateSessionInput,
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
@@ -44,10 +43,10 @@ async function handleCreateSession(
       let targetSessionId: string;
 
       if (params.sessionId) {
-        const projectId = config.browserbaseProjectId || '';
+        const projectId = config.browserbaseProjectId || "";
         targetSessionId = `${params.sessionId}_${projectId}`;
         process.stderr.write(
-          `[tool.createSession] Attempting to create/assign session with specified ID: ${targetSessionId}`
+          `[tool.createSession] Attempting to create/assign session with specified ID: ${targetSessionId}`,
         );
       } else {
         targetSessionId = defaultSessionId;
@@ -58,21 +57,27 @@ async function handleCreateSession(
         session = await ensureDefaultSessionInternal(config);
       } else {
         // When user provides a sessionId, we want to resume that Browserbase session
-        session = await createNewBrowserSession(targetSessionId, config, params.sessionId);
+        session = await createNewBrowserSession(
+          targetSessionId,
+          config,
+          params.sessionId,
+        );
       }
 
       if (!session || !session.browser || !session.page || !session.sessionId) {
         throw new Error(
-          `SessionManager failed to return a valid session object with actualSessionId for ID: ${targetSessionId}`
+          `SessionManager failed to return a valid session object with actualSessionId for ID: ${targetSessionId}`,
         );
       }
 
       context.currentSessionId = targetSessionId;
       process.stderr.write(
-        `[tool.connected] Successfully connected to Browserbase session. Internal ID: ${targetSessionId}, Actual ID: ${session.sessionId}`
+        `[tool.connected] Successfully connected to Browserbase session. Internal ID: ${targetSessionId}, Actual ID: ${session.sessionId}`,
       );
 
-      process.stderr.write(`[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.sessionId}`);
+      process.stderr.write(
+        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.sessionId}`,
+      );
 
       return {
         content: [
@@ -82,25 +87,21 @@ async function handleCreateSession(
           },
         ],
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       process.stderr.write(
-        `[tool.createSession] Action failed: ${
-          error.message || String(error)
-        }`
+        `[tool.createSession] Action failed: ${errorMessage}`,
       );
       // Re-throw to be caught by Context.run's error handling for actions
-      throw new Error(
-        `Failed to create Browserbase session: ${
-          error.message || String(error)
-        }`
-      );
+      throw new Error(`Failed to create Browserbase session: ${errorMessage}`);
     }
   };
 
   // Return the ToolResult structure expected by Context.run
   return {
-    action: action, 
-    waitForNetwork: false, 
+    action: action,
+    waitForNetwork: false,
   };
 }
 
@@ -129,7 +130,7 @@ const closeSessionSchema: ToolSchema<typeof CloseSessionInputSchema> = {
 
 async function handleCloseSession(
   context: Context,
-  _params: CloseSessionInput
+  _params: CloseSessionInput,
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     // Store the current session ID before it's potentially changed.
@@ -140,22 +141,26 @@ async function handleCloseSession(
     // Step 1: Attempt to get the session and close Stagehand
     let browserbaseSessionId: string | undefined;
     try {
-      const session = await getSession(previousSessionId, context.config, false);
-      
+      const session = await getSession(
+        previousSessionId,
+        context.config,
+        false,
+      );
+
       if (session && session.stagehand) {
         // Store the actual Browserbase session ID for the replay URL
         browserbaseSessionId = session.sessionId;
-        
+
         process.stderr.write(
-          `[tool.closeSession] Attempting to close Stagehand for session: ${previousSessionId || 'default'} (Browserbase ID: ${browserbaseSessionId})`
+          `[tool.closeSession] Attempting to close Stagehand for session: ${previousSessionId || "default"} (Browserbase ID: ${browserbaseSessionId})`,
         );
-        
+
         // Use Stagehand's close method which handles browser cleanup properly
         await session.stagehand.close();
         stagehandClosedSuccessfully = true;
-        
+
         process.stderr.write(
-          `[tool.closeSession] Stagehand and browser connection for session (${previousSessionId}) closed successfully.`
+          `[tool.closeSession] Stagehand and browser connection for session (${previousSessionId}) closed successfully.`,
         );
 
         // Clean up the session from tracking
@@ -163,19 +168,19 @@ async function handleCloseSession(
 
         if (browserbaseSessionId) {
           process.stderr.write(
-            `[tool.closeSession] View session replay at https://www.browserbase.com/sessions/${browserbaseSessionId}`
+            `[tool.closeSession] View session replay at https://www.browserbase.com/sessions/${browserbaseSessionId}`,
           );
         }
-        
       } else {
         process.stderr.write(
-          `[tool.closeSession] No Stagehand instance found for session: ${previousSessionId || 'default/unknown'}`
+          `[tool.closeSession] No Stagehand instance found for session: ${previousSessionId || "default/unknown"}`,
         );
       }
-    } catch (error: any) {
-      stagehandCloseErrorMessage = error.message || String(error);
+    } catch (error: unknown) {
+      stagehandCloseErrorMessage =
+        error instanceof Error ? error.message : String(error);
       process.stderr.write(
-        `[tool.closeSession] Error retrieving or closing Stagehand (session ID was ${previousSessionId || 'default/unknown'}): ${stagehandCloseErrorMessage}`
+        `[tool.closeSession] Error retrieving or closing Stagehand (session ID was ${previousSessionId || "default/unknown"}): ${stagehandCloseErrorMessage}`,
       );
     }
 
@@ -183,18 +188,18 @@ async function handleCloseSession(
     const oldContextSessionId = context.currentSessionId;
     context.currentSessionId = defaultSessionId;
     process.stderr.write(
-      `[tool.closeSession] Session context reset to default. Previous context session ID was ${oldContextSessionId || 'default/unknown'}.`
+      `[tool.closeSession] Session context reset to default. Previous context session ID was ${oldContextSessionId || "default/unknown"}.`,
     );
 
     // Step 3: Determine the result message
     if (stagehandCloseErrorMessage && !stagehandClosedSuccessfully) {
       throw new Error(
-        `Failed to close the Stagehand session (session ID in context was ${previousSessionId || 'default/unknown'}). Error: ${stagehandCloseErrorMessage}. Session context has been reset to default.`
+        `Failed to close the Stagehand session (session ID in context was ${previousSessionId || "default/unknown"}). Error: ${stagehandCloseErrorMessage}. Session context has been reset to default.`,
       );
     }
 
     if (stagehandClosedSuccessfully) {
-      let successMessage = `Browserbase session (${previousSessionId || 'default'}) closed successfully via Stagehand. Context reset to default.`;
+      let successMessage = `Browserbase session (${previousSessionId || "default"}) closed successfully via Stagehand. Context reset to default.`;
       if (browserbaseSessionId && previousSessionId !== defaultSessionId) {
         successMessage += ` View replay at https://browserbase.com/sessions/${browserbaseSessionId}`;
       }
@@ -202,9 +207,10 @@ async function handleCloseSession(
     }
 
     // No Stagehand instance was found
-    let infoMessage = "No active Stagehand session found to close. Session context has been reset to default.";
+    let infoMessage =
+      "No active Stagehand session found to close. Session context has been reset to default.";
     if (previousSessionId && previousSessionId !== defaultSessionId) {
-       infoMessage = `No active Stagehand session found for session ID '${previousSessionId}'. The context has been reset to default.`;
+      infoMessage = `No active Stagehand session found for session ID '${previousSessionId}'. The context has been reset to default.`;
     }
     return { content: [{ type: "text", text: infoMessage }] };
   };

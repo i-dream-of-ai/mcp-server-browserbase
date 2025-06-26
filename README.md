@@ -10,15 +10,15 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 
 ## Features
 
-| Feature             | Description                                                    |
-| ------------------- | -------------------------------------------------------------- |
-| Browser Automation  | Control and orchestrate cloud browsers via Browserbase        |
-| Data Extraction     | Extract structured data from any webpage                       |
-| Web Interaction     | Navigate, click, and fill forms with ease                     |
-| Screenshots         | Capture full-page and element screenshots                      |
-| Model Flexibility   | Supports multiple models (OpenAI, Claude, Gemini, and more)   |
-| Vision Support      | Use annotated screenshots for complex DOMs                     |
-| Session Management  | Create, manage, and close browser sessions                     |
+| Feature            | Description                                                 |
+| ------------------ | ----------------------------------------------------------- |
+| Browser Automation | Control and orchestrate cloud browsers via Browserbase      |
+| Data Extraction    | Extract structured data from any webpage                    |
+| Web Interaction    | Navigate, click, and fill forms with ease                   |
+| Screenshots        | Capture full-page and element screenshots                   |
+| Model Flexibility  | Supports multiple models (OpenAI, Claude, Gemini, and more) |
+| Vision Support     | Use annotated screenshots for complex DOMs                  |
+| Session Management | Create, manage, and close browser sessions                  |
 
 ### Alternative Installation Methods
 
@@ -26,11 +26,11 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 
 ## How to Setup
 
-### Quickstarts: 
+### Quickstarts:
 
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.png)](cursor://anysphere.cursor-deeplink/mcp/install?name=browserbase&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAYnJvd3NlcmJhc2VocS9tY3AiXSwiZW52Ijp7IkJST1dTRVJCQVNFX0FQSV9LRVkiOiIiLCJCUk9XU0VSQkFTRV9QUk9KRUNUX0lEIjoiIn19)
 
-You can either use our Server hosted on NPM or run it completely locally by cloning this repo. 
+You can either use our Server hosted on NPM or run it completely locally by cloning this repo.
 
 ### To run on NPM (Recommended)
 
@@ -38,25 +38,25 @@ Go into your MCP Config JSON and add the Browserbase Server:
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command": "npx",
-         "args" : ["@browserbasehq/mcp"],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": ["@browserbasehq/mcp"],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
-That's it! Reload your MCP client and Claude will be able to use Browserbase. 
+That's it! Reload your MCP client and Claude will be able to use Browserbase.
 
-### To run 100% local: 
+### To run 100% local:
 
 ```bash
-# Clone the Repo 
+# Clone the Repo
 git clone https://github.com/browserbase/mcp-server-browserbase.git
 cd mcp-server-browserbase
 
@@ -64,49 +64,49 @@ cd mcp-server-browserbase
 npm install && npm run build
 ```
 
-Then in your MCP Config JSON run the server. To run locally we can use STDIO or self-host over SSE. 
+Then in your MCP Config JSON run the server. To run locally we can use STDIO or self-host over SSE.
 
-### STDIO: 
+### STDIO:
 
-To your MCP Config JSON file add the following: 
+To your MCP Config JSON file add the following:
 
 ```json
 {
-"mcpServers": {
-   "browserbase": {
-      "command" : "node",
-      "args" : ["/path/to/mcp-server-browserbase/cli.js"],
+  "mcpServers": {
+    "browserbase": {
+      "command": "node",
+      "args": ["/path/to/mcp-server-browserbase/cli.js"],
       "env": {
-         "BROWSERBASE_API_KEY": "",
-         "BROWSERBASE_PROJECT_ID": ""
-         }
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
-### SSE: 
+### SSE:
 
-Run the following command in your terminal. You can add any flags (see options below) that you see fit to customize your configuration. 
+Run the following command in your terminal. You can add any flags (see options below) that you see fit to customize your configuration.
 
 ```bash
    node cli.js --port 8931
 ```
 
-Then in your MCP Config JSON file put the following: 
+Then in your MCP Config JSON file put the following:
 
 ```json
-   {
-      "mcpServers": {
-         "browserbase": {
-            "url": "http://localhost:8931/sse",
-            "env": {
-               "BROWSERBASE_API_KEY": "",
-               "BROWSERBASE_PROJECT_ID": ""
-            }
-         }
+{
+  "mcpServers": {
+    "browserbase": {
+      "url": "http://localhost:8931/sse",
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
+}
 ```
 
 Then reload your MCP client and you should be good to go!
@@ -115,26 +115,26 @@ Then reload your MCP client and you should be good to go!
 
 The Browserbase MCP server accepts the following command-line flags:
 
-| Flag | Description |
-|------|-------------|
-| `--browserbaseApiKey <key>` | Your Browserbase API key for authentication |
-| `--browserbaseProjectId <id>` | Your Browserbase project ID |
-| `--proxies` | Enable Browserbase proxies for the session |
-| `--advancedStealth` | Enable Browserbase Advanced Stealth (Only for Scale Plan Users) | 
-| `--contextId <contextId>` | Specify a Browserbase Context ID to use |
-| `--persist [boolean]` | Whether to persist the Browserbase context (default: true) |
-| `--port <port>` | Port to listen on for HTTP/SSE transport |
-| `--host <host>` | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
-| `--cookies [json]` | JSON array of cookies to inject into the browser |
-| `--browserWidth <width>` | Browser viewport width (default: 1024) |
-| `--browserHeight <height>` | Browser viewport height (default: 768) |
-| `--modelName <model>` | The model to use for Stagehand (default: google/gemini-2.0-flash) |
+| Flag                          | Description                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------- |
+| `--browserbaseApiKey <key>`   | Your Browserbase API key for authentication                                 |
+| `--browserbaseProjectId <id>` | Your Browserbase project ID                                                 |
+| `--proxies`                   | Enable Browserbase proxies for the session                                  |
+| `--advancedStealth`           | Enable Browserbase Advanced Stealth (Only for Scale Plan Users)             |
+| `--contextId <contextId>`     | Specify a Browserbase Context ID to use                                     |
+| `--persist [boolean]`         | Whether to persist the Browserbase context (default: true)                  |
+| `--port <port>`               | Port to listen on for HTTP/SSE transport                                    |
+| `--host <host>`               | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
+| `--cookies [json]`            | JSON array of cookies to inject into the browser                            |
+| `--browserWidth <width>`      | Browser viewport width (default: 1024)                                      |
+| `--browserHeight <height>`    | Browser viewport height (default: 768)                                      |
+| `--modelName <model>`         | The model to use for Stagehand (default: google/gemini-2.0-flash)           |
 
 These flags can be passed directly to the CLI or configured in your MCP configuration file.
 
-### NOTE: 
+### NOTE:
 
-Currently, these flags can only be used with the local server (npx @browserbasehq/mcp). 
+Currently, these flags can only be used with the local server (npx @browserbasehq/mcp).
 
 ## Configuration Examples
 
@@ -146,20 +146,20 @@ To use proxies, set the --proxies flag in your MCP Config:
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : ["@browserbasehq/mcp", "--proxies"],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": ["@browserbasehq/mcp", "--proxies"],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
-### Advanced Stealth 
+### Advanced Stealth
 
 Here are our docs on [Advanced Stealth](https://docs.browserbase.com/features/stealth-mode#advanced-stealth-mode).
 
@@ -167,16 +167,16 @@ To use advanced stealth, set the --advancedStealth flag in your MCP Config:
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : ["@browserbasehq/mcp", "--advancedStealth"],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": ["@browserbasehq/mcp", "--advancedStealth"],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
@@ -188,69 +188,70 @@ To use contexts, set the --contextId flag in your MCP Config:
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : ["@browserbasehq/mcp", "--contextId", "<YOUR_CONTEXT_ID>"],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": ["@browserbasehq/mcp", "--contextId", "<YOUR_CONTEXT_ID>"],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
 ### Cookie Injection
 
-Why would you need to inject cookies? Our context API currently works on persistent cookies, but not session cookies. So sometimes our persistent auth might not work (we're working hard to add this functionality). 
+Why would you need to inject cookies? Our context API currently works on persistent cookies, but not session cookies. So sometimes our persistent auth might not work (we're working hard to add this functionality).
 
 You can inject cookies into the MCP by adding them to your MCP Config. Your cookies JSON must be in the format of [Playwright Cookies](https://playwright.dev/docs/api/class-browsercontext#browser-context-cookies)
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : [
-            "@browserbasehq/mcp", "--cookies", 
-            '[{"name": "session", "value": "abc123", "domain": ".example.com"}]'
-         ],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": [
+        "@browserbasehq/mcp",
+        "--cookies",
+        "[{\"name\": \"session\", \"value\": \"abc123\", \"domain\": \".example.com\"}]"
+      ],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
-### Browser Viewport Sizing 
+### Browser Viewport Sizing
 
-The default viewport sizing for a browser session is 1024 x 768. You can adjust the Browser viewport sizing with browserWidth and browserHeight flags. 
+The default viewport sizing for a browser session is 1024 x 768. You can adjust the Browser viewport sizing with browserWidth and browserHeight flags.
 
 Here's how to use it for custom browser sizing. We recommend to stick with 16:9 aspect ratios (ie: 1920 x 1080, 1280 x 720, 1024 x 768)
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : [
-            "@browserbasehq/mcp",
-            "--browserHeight 1080",
-            "--browserWidth 1920",
-         ],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": [
+        "@browserbasehq/mcp",
+        "--browserHeight 1080",
+        "--browserWidth 1920"
+      ],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
-### Model Configuration 
+### Model Configuration
 
 Stagehand defaults to using Google's Gemini 2.0 Flash model, but you can configure it to use other models like GPT-4o, Claude, or other providers.
 
@@ -258,29 +259,27 @@ Here's how to configure different models:
 
 ```json
 {
-   "mcpServers": {
-      "browserbase": {
-         "command" : "npx",
-         "args" : [
-            "@browserbasehq/mcp",
-            "--modelName", "gpt-4o"
-         ],
-         "env": {
-            "BROWSERBASE_API_KEY": "",
-            "BROWSERBASE_PROJECT_ID": ""
-         }
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": ["@browserbasehq/mcp", "--modelName", "gpt-4o"],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
       }
-   }
+    }
+  }
 }
 ```
 
 Available models include:
+
 - **Gemini**: `google/gemini-2.0-flash` (default), `google/gemini-1.5-pro`, `google/gemini-1.5-flash`
 - **OpenAI**: `gpt-4o`, `gpt-4o-mini`, `o1-mini`, `o1-preview`, `o3-mini`
 - **Claude**: `claude-3-5-sonnet-latest`, `claude-3-7-sonnet-latest`
 - **Other providers**: Cerebras, Groq, and more
 
-*Note: The model must be supported in Stagehand. Check out the docs [here](https://docs.stagehand.dev/examples/custom_llms#supported-llms).*
+_Note: The model must be supported in Stagehand. Check out the docs [here](https://docs.stagehand.dev/examples/custom_llms#supported-llms)._
 
 ## Tools
 
@@ -288,28 +287,28 @@ The Browserbase MCP server provides the following tools for browser automation:
 
 ### Browser Automation Tools
 
-- **stagehand_navigate**
+- **browserbase_stagehand_navigate**
   - Navigate to any URL in the browser
   - Input:
     - `url` (string): The URL to navigate to
 
-- **stagehand_act**
+- **browserbase_stagehand_act**
   - Perform an action on the web page using natural language
   - Inputs:
     - `action` (string): The action to perform (e.g., "click the login button")
     - `variables` (object, optional): Variables used in the action template for sensitive data
 
-- **stagehand_extract**
+- **browserbase_stagehand_extract**
   - Extract all text content from the current page (filters out CSS and JavaScript)
   - No inputs required
 
-- **stagehand_observe**
+- **browserbase_stagehand_observe**
   - Observe and find actionable elements on the web page
   - Input:
     - `instruction` (string): Specific instruction for observation (e.g., "find the login button")
 
-- **screenshot**
-  - Capture a PNG screenshot of the current page 
+- **browserbase_screenshot**
+  - Capture a PNG screenshot of the current page
   - No inputs required
   - Output:
     - `text`: Friendly confirmation message with the screenshot name
@@ -433,6 +432,7 @@ This server implements the following MCP capabilities:
 - **Context Persistence**: Maintain authentication and state across sessions
 
 For more information about the Model Context Protocol, visit:
+
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 

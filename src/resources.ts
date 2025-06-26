@@ -1,6 +1,7 @@
 /**
  * Resources module for the Stagehand MCP server
  * Contains resources definitions and handlers for resource-related requests
+ * Docs: https://modelcontextprotocol.io/docs/concepts/resources
  */
 
 // Define the resources
@@ -17,14 +18,14 @@ export const screenshots = new Map<string, string>();
  * @returns A list of available resources including screenshots
  */
 export function listResources() {
-  return { 
+  return {
     resources: [
       ...Array.from(screenshots.keys()).map((name) => ({
         uri: `screenshot://${name}`,
         mimeType: "image/png",
         name: `Screenshot: ${name}`,
       })),
-    ]
+    ],
   };
 }
 
@@ -59,4 +60,4 @@ export function readResource(uri: string) {
   }
 
   throw new Error(`Resource not found: ${uri}`);
-} 
+}

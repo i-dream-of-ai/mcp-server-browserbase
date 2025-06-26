@@ -1,12 +1,12 @@
-import os from 'os';
-import fs from 'fs';
-import path from 'path';
-import { sanitizeForFilePath } from './utils.js'; 
+import os from "os";
+import fs from "fs";
+import path from "path";
+import { sanitizeForFilePath } from "./utils.js";
 import type { Cookie } from "playwright-core";
-import type { Config } from '../config.js';
-import { AvailableModelSchema } from '@browserbasehq/stagehand';
+import type { Config } from "../config.js";
+import { AvailableModelSchema } from "@browserbasehq/stagehand";
 
-export type ToolCapability = 'core' | string; 
+export type ToolCapability = "core" | string;
 
 // Define Command Line Options Structure
 export type CLIOptions = {
@@ -61,15 +61,19 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
     console.warn("Warning: BROWSERBASE_API_KEY environment variable not set.");
   }
   if (!mergedConfig.browserbaseProjectId) {
-      console.warn("Warning: BROWSERBASE_PROJECT_ID environment variable not set.");
+    console.warn(
+      "Warning: BROWSERBASE_PROJECT_ID environment variable not set.",
+    );
   }
 
   return mergedConfig;
 }
 
 // Create Config structure based on CLI options
-export async function configFromCLIOptions(cliOptions: CLIOptions): Promise<Config> {
- return {
+export async function configFromCLIOptions(
+  cliOptions: CLIOptions,
+): Promise<Config> {
+  return {
     browserbaseApiKey: cliOptions.browserbaseApiKey,
     browserbaseProjectId: cliOptions.browserbaseProjectId,
     server: {
@@ -87,12 +91,15 @@ export async function configFromCLIOptions(cliOptions: CLIOptions): Promise<Conf
     },
     advancedStealth: cliOptions.advancedStealth,
     cookies: cliOptions.cookies,
-    modelName: cliOptions.modelName 
+    modelName: cliOptions.modelName,
   };
 }
 
 // Create an output file path within the configured output directory
-export async function outputFile(config: Config, name: string): Promise<string> {
+export async function outputFile(
+  config: Config,
+  name: string,
+): Promise<string> {
   const outputDir = os.tmpdir();
   await fs.promises.mkdir(outputDir, { recursive: true });
   const sanitizedName = sanitizeForFilePath(name);
@@ -103,7 +110,7 @@ export async function outputFile(config: Config, name: string): Promise<string> 
 function pickDefined<T extends object>(obj: T | undefined): Partial<T> {
   if (!obj) return {};
   return Object.fromEntries(
-      Object.entries(obj).filter(([_, v]) => v !== undefined)
+    Object.entries(obj).filter(([, v]) => v !== undefined),
   ) as Partial<T>;
 }
 
@@ -111,35 +118,35 @@ function pickDefined<T extends object>(obj: T | undefined): Partial<T> {
 function mergeConfig(base: Config, overrides: Config): Config {
   const baseFiltered = pickDefined(base);
   const overridesFiltered = pickDefined(overrides);
-  
+
   // Create the result object
   const result = { ...baseFiltered } as Config;
-  
+
   // For each property in overrides
   for (const [key, value] of Object.entries(overridesFiltered)) {
-    if (key === 'context' && value && result.context) {
+    if (key === "context" && value && result.context) {
       // Special handling for context object to ensure deep merge
       result.context = {
         ...result.context,
-        ...(value as Config['context'])
+        ...(value as Config["context"]),
       };
     } else if (
-      value && 
-      typeof value === 'object' && 
-      !Array.isArray(value) && 
-      result[key as keyof Config] && 
-      typeof result[key as keyof Config] === 'object'
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      result[key as keyof Config] &&
+      typeof result[key as keyof Config] === "object"
     ) {
       // Deep merge for other nested objects
       result[key as keyof Config] = {
         ...(result[key as keyof Config] as object),
-        ...value
-      } as any;
+        ...value,
+      } as unknown;
     } else {
       // Simple override for primitives, arrays, etc.
-      result[key as keyof Config] = value as any;
+      result[key as keyof Config] = value as unknown;
     }
   }
-  
+
   return result;
-} 
+}

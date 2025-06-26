@@ -17,11 +17,10 @@ export class ServerList {
   async close(server: Server) {
     await server.close();
     const index = this._servers.indexOf(server);
-    if (index !== -1)
-      this._servers.splice(index, 1);
+    if (index !== -1) this._servers.splice(index, 1);
   }
 
   async closeAll() {
-    await Promise.all(this._servers.map(server => server.close()));
+    await Promise.all(this._servers.map((server) => server.close()));
   }
 }

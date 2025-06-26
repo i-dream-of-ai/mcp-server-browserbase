@@ -24,4 +24,4 @@ export const TOOLS = [
   screenshotTool,
 ];
 
-export const sessionManagementTools = sessionTools; 
+export const sessionManagementTools = sessionTools;
