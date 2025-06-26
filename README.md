@@ -481,6 +481,7 @@ mcp-server-browserbase/
 ### Tools & Types
 
 **tools/** - Individual tool implementations with type-safe Zod schemas including:
+
 - Core browser automation tools (navigate, act, extract, observe, screenshot)
 - Single session management tools (session.ts)
 - Multi-session management and session-aware tool variants (multiSession.ts)
