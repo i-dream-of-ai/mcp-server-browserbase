@@ -1,6 +1,7 @@
 /**
- * Prompts module for the Stagehand MCP server
+ * Prompts module for the Browserbase MCP server
  * Contains prompts definitions and handlers for prompt-related requests
+ * Docs: https://modelcontextprotocol.io/docs/concepts/prompts
  */
 
 // Define the prompts

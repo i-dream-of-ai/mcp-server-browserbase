@@ -1,7 +1,7 @@
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
-import { sanitizeForFilePath } from './tools/utils.js'; 
+import { sanitizeForFilePath } from './utils.js'; 
 import type { Cookie } from "playwright-core";
 import type { Config } from '../config.js';
 import { AvailableModelSchema } from '@browserbasehq/stagehand';
