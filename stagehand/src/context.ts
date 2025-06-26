@@ -1,16 +1,8 @@
-import { Stagehand } from "@browserbasehq/stagehand";
+import type { Stagehand } from "@browserbasehq/stagehand";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Config } from "../config.js";
 import { CallToolResult, TextContent, ImageContent } from "@modelcontextprotocol/sdk/types.js";
 import { listResources, readResource } from "./resources.js";
-import { 
-  ensureLogDirectory, 
-  setupLogRotation, 
-  registerExitHandlers, 
-  scheduleLogRotation,
-  setServerInstance,
-  log 
-} from "./logging.js";
 import { 
   getSession, 
   defaultSessionId, 
@@ -23,7 +15,6 @@ export type ToolActionResult =
   | void;
 
 export class Context {
-  private stagehands = new Map<string, Stagehand>();
   public readonly config: Config;
   private server: Server;
   public currentSessionId: string = defaultSessionId;
@@ -31,66 +22,25 @@ export class Context {
   constructor(server: Server, config: Config) {
     this.server = server;
     this.config = config;
-    
-    // Initialize logging system
-    setServerInstance(server);
-    ensureLogDirectory();
-    setupLogRotation();
-    registerExitHandlers();
-    scheduleLogRotation();
+  }
+
+  public getServer(): Server {
+    return this.server;
   }
 
   /**
-   * Gets the Stagehand instance for the current session, creating one if needed
+   * Gets the Stagehand instance for the current session from SessionManager
    */
   public async getStagehand(sessionId: string = this.currentSessionId): Promise<Stagehand> {
-    let stagehand = this.stagehands.get(sessionId);
-    
-    if (!stagehand) {
-      // Create a new Stagehand instance for this session
-      stagehand = new Stagehand({
-        env: "BROWSERBASE",
-        logger: (logLine) => {
-          log(`Stagehand[${sessionId}]: ${logLine.message}`, 'info');
-        },
-      });
-      this.stagehands.set(sessionId, stagehand);
+    const session = await getSession(sessionId, this.config);
+    if (!session) {
+      throw new Error(`No session found for ID: ${sessionId}`);
     }
-
-    await stagehand.init();
-    
-    return stagehand;
+    return session.stagehand;
   }
 
-  /**
-   * Sets the Stagehand instance for a specific session
-   */
-  public setStagehand(sessionId: string, stagehand: Stagehand): void {
-    this.stagehands.set(sessionId, stagehand);
-  }
-
-  /**
-   * Removes the Stagehand instance for a specific session
-   */
-  public async removeStagehand(sessionId: string): Promise<void> {
-    const stagehand = this.stagehands.get(sessionId);
-    if (stagehand) {
-      try {
-        await stagehand.close();
-      } catch (error) {
-        log(`Error closing Stagehand for session ${sessionId}: ${error}`, 'error');
-      }
-      this.stagehands.delete(sessionId);
-    }
-  }
   public async getActivePage(): Promise<BrowserSession["page"] | null> {
-    // Try to get page from Stagehand first (if available for this session)
-    const stagehand = this.stagehands.get(this.currentSessionId);
-    if (stagehand && stagehand.page && !stagehand.page.isClosed()) {
-      return stagehand.page;
-    }
-    
-    // Fallback to session manager
+    // Get page from session manager
     const session = await getSession(this.currentSessionId, this.config);
     if (session && session.page && !session.page.isClosed()) {
       return session.page;
@@ -109,7 +59,7 @@ export class Context {
 
   async run(tool: any, args: any): Promise<CallToolResult> {
     try {
-      log(`Executing tool: ${tool.schema.name} with args: ${JSON.stringify(args)}`, 'info');
+      console.error(`Executing tool: ${tool.schema.name} with args: ${JSON.stringify(args)}`);
       
       // Check if this tool has a handle method (new tool system)
       if ("handle" in tool && typeof tool.handle === "function") {
@@ -135,7 +85,7 @@ export class Context {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      log(`Tool ${tool.schema?.name || 'unknown'} failed: ${errorMessage}`, 'error');
+      console.error(`Tool ${tool.schema?.name || 'unknown'} failed: ${errorMessage}`);
       return {
         content: [{ type: "text", text: `Error: ${errorMessage}` }],
         isError: true,
@@ -155,21 +105,4 @@ export class Context {
     return readResource(uri);
   }
 
-  async close() {
-    try {
-      // Close all Stagehand instances
-      for (const [sessionId, stagehand] of this.stagehands.entries()) {
-        try {
-          await stagehand.close();
-          log(`Closed Stagehand for session ${sessionId}`, 'info');
-        } catch (error) {
-          log(`Error closing Stagehand for session ${sessionId}: ${error}`, 'error');
-        }
-      }
-      this.stagehands.clear();
-      log('All Stagehand contexts closed successfully', 'info');
-    } catch (error) {
-      log(`Error closing Stagehand contexts: ${error}`, 'error');
-    }
-  }
 } 

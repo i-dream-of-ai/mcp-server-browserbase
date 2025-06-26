@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
 import type { ToolActionResult } from "../context.js";
-import { getServerInstance } from "../logging.js";
 import { screenshots } from "../resources.js";
 
 const ScreenshotInputSchema = z.object({
@@ -41,7 +40,8 @@ async function handleScreenshot(
       screenshots.set(name, screenshotBase64);
 
       // Notify the client that the resources changed
-      const serverInstance = getServerInstance();
+      const serverInstance = context.getServer();
+
       if (serverInstance) {
         serverInstance.notification({
           method: "notifications/resources/list_changed",

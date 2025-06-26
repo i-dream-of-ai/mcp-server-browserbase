@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
 import type { ToolActionResult } from "../context.js";
-import { operationLogs } from "../logging.js";
 
 const NavigateInputSchema = z.object({
   url: z.string().describe("The URL to navigate to"),

@@ -4,6 +4,7 @@ import path from 'path';
 import { sanitizeForFilePath } from './tools/utils.js'; 
 import type { Cookie } from "playwright-core";
 import type { Config } from '../config.js';
+import { AvailableModelSchema } from '@browserbasehq/stagehand';
 
 export type ToolCapability = 'core' | string; 
 
@@ -20,6 +21,7 @@ export type CLIOptions = {
   cookies?: Cookie[];
   browserWidth?: number;
   browserHeight?: number;
+  modelName?: typeof AvailableModelSchema;
 };
 
 // Default Configuration Values
@@ -36,6 +38,7 @@ const defaultConfig: Config = {
     browserHeight: 768,
   },
   cookies: undefined,
+  modelName: "google/gemini-2.0-flash", // Default Model
 };
 
 // Resolve final configuration by merging defaults, file config, and CLI options
@@ -84,6 +87,7 @@ export async function configFromCLIOptions(cliOptions: CLIOptions): Promise<Conf
     },
     advancedStealth: cliOptions.advancedStealth,
     cookies: cliOptions.cookies,
+    modelName: cliOptions.modelName 
   };
 }
 

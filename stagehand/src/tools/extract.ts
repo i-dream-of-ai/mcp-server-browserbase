@@ -27,6 +27,7 @@ async function handleExtract(
       }
 
       const bodyText = await page.evaluate(() => document.body.innerText);
+
       const content = bodyText
         .split("\n")
         .map((line) => line.trim())

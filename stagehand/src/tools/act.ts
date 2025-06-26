@@ -37,6 +37,7 @@ async function handleAct(
   const action = async (): Promise<ToolActionResult> => {
     try {
       const stagehand = await context.getStagehand();
+
       await stagehand.page.act({
         action: params.action,
         variables: params.variables,

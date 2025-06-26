@@ -9,6 +9,7 @@ import {
   defaultSessionId,
   ensureDefaultSessionInternal,
   cleanupSession,
+  getSession,
   type BrowserSession,
 } from "../sessionManager.js";
 
@@ -27,7 +28,7 @@ type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 const createSessionSchema: ToolSchema<typeof CreateSessionInputSchema> = {
   name: "browserbase_session_create", 
   description:
-    "Create or reuse a cloud browser session using Browserbase. Updates the active session.", 
+    "Create or reuse a cloud browser session using Browserbase with fully initialized Stagehand. This creates the browser session with all configuration flags (proxies, stealth, viewport, cookies, etc.) and initializes Stagehand to work with that session. Updates the active session.", 
   inputSchema: CreateSessionInputSchema,
 };
 
@@ -56,7 +57,8 @@ async function handleCreateSession(
       if (targetSessionId === defaultSessionId) {
         session = await ensureDefaultSessionInternal(config);
       } else {
-        session = await createNewBrowserSession(targetSessionId, config);
+        // When user provides a sessionId, we want to resume that Browserbase session
+        session = await createNewBrowserSession(targetSessionId, config, params.sessionId);
       }
 
       if (!session || !session.browser || !session.page || !session.sessionId) {
@@ -121,7 +123,7 @@ type CloseSessionInput = z.infer<typeof CloseSessionInputSchema>;
 const closeSessionSchema: ToolSchema<typeof CloseSessionInputSchema> = {
   name: "browserbase_session_close",
   description:
-    "Closes the current Browserbase session by disconnecting the Playwright browser. This will terminate the recording for the session.",
+    "Closes the current Browserbase session by properly shutting down the Stagehand instance, which handles browser cleanup and terminates the session recording.",
   inputSchema: CloseSessionInputSchema,
 };
 
@@ -131,82 +133,78 @@ async function handleCloseSession(
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     // Store the current session ID before it's potentially changed.
-    // This allows us to reference the original session ID later if needed.
-    const previousSessionId = context.currentSessionId; // Capture the ID before any changes
-    let browser: BrowserSession["browser"] | null = null;
-    let browserClosedSuccessfully = false;
-    let browserCloseErrorMessage = "";
+    const previousSessionId = context.currentSessionId;
+    let stagehandClosedSuccessfully = false;
+    let stagehandCloseErrorMessage = "";
 
-    // Step 1: Attempt to get the active browser instance WITHOUT creating a new one
+    // Step 1: Attempt to get the session and close Stagehand
+    let browserbaseSessionId: string | undefined;
     try {
-      // Use read-only version to avoid creating new sessions
-      browser = await context.getActiveBrowser(false);
-    } catch (error: any) {
-      process.stderr.write(
-        `[tool.closeSession] Error retrieving active browser (session ID was ${previousSessionId || 'default/unknown'}): ${error.message || String(error)}`
-      );
-      // If we can't even get the browser, we can't close it.
-      // We will still proceed to reset context.
-    }
-
-    // Step 2: If a browser instance was retrieved, attempt to close it
-    if (browser) {
-      try {
+      const session = await getSession(previousSessionId, context.config, false);
+      
+      if (session && session.stagehand) {
+        // Store the actual Browserbase session ID for the replay URL
+        browserbaseSessionId = session.sessionId;
+        
         process.stderr.write(
-          `[tool.closeSession] Attempting to close browser for session: ${previousSessionId || 'default (actual might differ)'}`
+          `[tool.closeSession] Attempting to close Stagehand for session: ${previousSessionId || 'default'} (Browserbase ID: ${browserbaseSessionId})`
         );
-        await browser.close();
-        browserClosedSuccessfully = true;
+        
+        // Use Stagehand's close method which handles browser cleanup properly
+        await session.stagehand.close();
+        stagehandClosedSuccessfully = true;
+        
         process.stderr.write(
-          `[tool.closeSession] Browser connection for session (was ${previousSessionId}) closed.`
+          `[tool.closeSession] Stagehand and browser connection for session (${previousSessionId}) closed successfully.`
         );
 
         // Clean up the session from tracking
         cleanupSession(previousSessionId);
 
-        process.stderr.write(
-          `[tool.closeSession] View session replay at https://www.browserbase.com/sessions/${previousSessionId}`
-        );
+        if (browserbaseSessionId) {
+          process.stderr.write(
+            `[tool.closeSession] View session replay at https://www.browserbase.com/sessions/${browserbaseSessionId}`
+          );
+        }
         
-      } catch (error: any) {
-        browserCloseErrorMessage = error.message || String(error);
+      } else {
         process.stderr.write(
-          `[tool.closeSession] Error during browser.close() for session (was ${previousSessionId}): ${browserCloseErrorMessage}`
+          `[tool.closeSession] No Stagehand instance found for session: ${previousSessionId || 'default/unknown'}`
         );
       }
-    } else {
+    } catch (error: any) {
+      stagehandCloseErrorMessage = error.message || String(error);
       process.stderr.write(
-        `[tool.closeSession] No active browser instance found to close. (Session ID in context was: ${previousSessionId || 'default/unknown'}).`
+        `[tool.closeSession] Error retrieving or closing Stagehand (session ID was ${previousSessionId || 'default/unknown'}): ${stagehandCloseErrorMessage}`
       );
     }
 
-    // Step 3: Always reset the context's current session ID to default
-    const oldContextSessionId = context.currentSessionId; // This should effectively be 'previousSessionId'
+    // Step 2: Always reset the context's current session ID to default
+    const oldContextSessionId = context.currentSessionId;
     context.currentSessionId = defaultSessionId;
     process.stderr.write(
       `[tool.closeSession] Session context reset to default. Previous context session ID was ${oldContextSessionId || 'default/unknown'}.`
     );
 
-    // Step 4: Determine the result message
-    if (browser && !browserClosedSuccessfully) { // An attempt was made to close, but it failed
+    // Step 3: Determine the result message
+    if (stagehandCloseErrorMessage && !stagehandClosedSuccessfully) {
       throw new Error(
-        `Failed to close the Browserbase browser (session ID in context was ${previousSessionId || 'default/unknown'}). Error: ${browserCloseErrorMessage}. Session context has been reset to default.`
+        `Failed to close the Stagehand session (session ID in context was ${previousSessionId || 'default/unknown'}). Error: ${stagehandCloseErrorMessage}. Session context has been reset to default.`
       );
     }
 
-    if (browserClosedSuccessfully) { // Browser was present and closed
-      let successMessage = `Browserbase session (associated with context ID ${previousSessionId || 'default'}) closed successfully. Context reset to default.`;
-      if (previousSessionId && previousSessionId !== defaultSessionId) {
-        successMessage += ` If this was a uniquely named session (${previousSessionId}), view replay (if available) at https://browserbase.com/sessions`;
+    if (stagehandClosedSuccessfully) {
+      let successMessage = `Browserbase session (${previousSessionId || 'default'}) closed successfully via Stagehand. Context reset to default.`;
+      if (browserbaseSessionId && previousSessionId !== defaultSessionId) {
+        successMessage += ` View replay at https://browserbase.com/sessions/${browserbaseSessionId}`;
       }
       return { content: [{ type: "text", text: successMessage }] };
     }
 
-    // No browser was found, or browser was null initially.
-    let infoMessage = "No active browser instance was found to close. Session context has been reset to default.";
+    // No Stagehand instance was found
+    let infoMessage = "No active Stagehand session found to close. Session context has been reset to default.";
     if (previousSessionId && previousSessionId !== defaultSessionId) {
-       // This means a specific session was in context, but no browser for it.
-       infoMessage = `No active browser found for session ID '${previousSessionId}' in context. The context has been reset to default.`;
+       infoMessage = `No active Stagehand session found for session ID '${previousSessionId}'. The context has been reset to default.`;
     }
     return { content: [{ type: "text", text: infoMessage }] };
   };

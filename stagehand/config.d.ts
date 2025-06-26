@@ -1,4 +1,5 @@
 import type { Cookie } from "playwright-core";
+import type { AvailableModelSchema } from "@browserbasehq/stagehand";
 
 export type Config = {
     /**
@@ -70,4 +71,11 @@ export type Config = {
          */
         host?: string;
     };
+    /**
+     * The Model that Stagehand uses
+     * Available models: OpenAI, Claude, Gemini, Cerebras, Groq, and other providers
+     * 
+     * @default "google/gemini-2.0-flash"
+     */
+    modelName?: AvailableModelSchema;
 };

@@ -25,6 +25,7 @@ async function handleObserve(
   const action = async (): Promise<ToolActionResult> => {
     try {
       const stagehand = await context.getStagehand();
+
       const observations = await stagehand.page.observe({
         instruction: params.instruction,
         returnAction: false,

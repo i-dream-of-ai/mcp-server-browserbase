@@ -1,11 +1,9 @@
 import {
-  chromium,
   Browser,
   Page,
 } from "playwright-core";
-import { Browserbase } from "@browserbasehq/sdk";
+import { AvailableModel, Stagehand } from "@browserbasehq/stagehand";
 import type { Config } from "../config.js"; 
-import { SessionCreateParams } from "@browserbasehq/sdk/src/resources/sessions/sessions.js";
 import type { Cookie } from "playwright-core";
 
 // Define the type for a session object
@@ -13,6 +11,7 @@ export type BrowserSession = {
   browser: Browser;
   page: Page;
   sessionId: string;
+  stagehand: Stagehand;
 };
 
 // Global state for managing browser sessions
@@ -72,10 +71,11 @@ export async function addCookiesToContext(context: any, cookies: Cookie[]): Prom
   }
 }
 
-// Function to create a new Browserbase session and connect Playwright
+// Function to create a new Browserbase session using Stagehand
 export async function createNewBrowserSession(
   newSessionId: string,
-  config: Config, 
+  config: Config,
+  resumeSessionId?: string
 ): Promise<BrowserSession> {
   if (!config.browserbaseApiKey) {
     throw new Error("Browserbase API Key is missing in the configuration.");
@@ -84,42 +84,61 @@ export async function createNewBrowserSession(
     throw new Error("Browserbase Project ID is missing in the configuration.");
   }
 
-  const bb = new Browserbase({
-    apiKey: config.browserbaseApiKey,
-  });
-
-  // Prepare session creation options
-  const sessionOptions: SessionCreateParams = {
-    // Use non-null assertion after check
-    projectId: config.browserbaseProjectId!,
-    proxies: config.proxies, 
-    browserSettings: {
-      viewport: {
-        width: config.viewPort?.browserWidth ?? 1024,
-        height: config.viewPort?.browserHeight ?? 768,
-      },
-      context: config.context?.contextId ? {
-        id: config.context?.contextId,
-        persist: config.context?.persist ?? true,
-      } : undefined,
-      advancedStealth: config.advancedStealth ?? undefined,
-    }
-  };
-
   try {
     process.stderr.write(
-      `[SessionManager] Creating session ${newSessionId}...\n`
+      `[SessionManager] ${resumeSessionId ? 'Resuming' : 'Creating'} Stagehand session ${newSessionId}...\n`
     );
-    const bbSession = await bb.sessions.create(sessionOptions);
+    
+    // Create and initialize Stagehand instance
+    const stagehand = new Stagehand({
+      env: "BROWSERBASE",
+      apiKey: config.browserbaseApiKey,
+      projectId: config.browserbaseProjectId,
+      modelName: (config.modelName || "google/gemini-2.0-flash") as AvailableModel,
+      modelClientOptions: {
+        apiKey: process.env.GEMINI_API_KEY, // TODO: change this in prod to just use our key
+      }, 
+      ...(resumeSessionId && { browserbaseSessionID: resumeSessionId }),
+      browserbaseSessionCreateParams: {
+        projectId: config.browserbaseProjectId!,
+        proxies: config.proxies,
+        browserSettings: {
+          viewport: {
+            width: config.viewPort?.browserWidth ?? 1024,
+            height: config.viewPort?.browserHeight ?? 768,
+          },
+          context: config.context?.contextId ? {
+            id: config.context?.contextId,
+            persist: config.context?.persist ?? true,
+          } : undefined,
+          advancedStealth: config.advancedStealth ?? undefined,
+        },
+      },
+      logger: (logLine) => {
+        console.error(`Stagehand[${newSessionId}]: ${logLine.message}`);
+      },
+    });
+    
+    await stagehand.init();
+    
+    // Get the page and browser from Stagehand
+    const page = stagehand.page as unknown as Page;
+    const browser = page.context().browser();
+    
+    if (!browser) {
+      throw new Error("Failed to get browser from Stagehand page context");
+    }
+    
+    const browserbaseSessionId = stagehand.browserbaseSessionID;
+    
     process.stderr.write(
-      `[SessionManager] Browserbase session created: ${bbSession.id}\n`
+      `[SessionManager] Stagehand initialized with Browserbase session: ${browserbaseSessionId}\n`
+    );
+    process.stderr.write(
+      `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${browserbaseSessionId}\n`
     );
 
-    const browser = await chromium.connectOverCDP(bbSession.connectUrl);
-    process.stderr.write(
-      `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${bbSession.id}\n`
-    );
-
+    // Set up disconnect handler
     browser.on("disconnected", () => {
       process.stderr.write(`[SessionManager] Disconnected: ${newSessionId}\n`);
       browsers.delete(newSessionId);
@@ -139,26 +158,17 @@ export async function createNewBrowserSession(
         setActiveSessionId(defaultSessionId);
       }
     });
-
-    let context = browser.contexts()[0];
-    if (!context) {
-      context = await browser.newContext();
-    }
     
     // Add cookies to the context if they are provided in the config
     if (config.cookies && Array.isArray(config.cookies) && config.cookies.length > 0) {
-      await addCookiesToContext(context, config.cookies);
-    }
-    
-    let page = context.pages()[0];
-    if (!page) {
-      page = await context.newPage();
+      await addCookiesToContext(page.context(), config.cookies);
     }
 
     const sessionObj: BrowserSession = {
       browser,
       page,
-      sessionId: bbSession.id, 
+      sessionId: browserbaseSessionId!, 
+      stagehand,
     };
 
     browsers.set(newSessionId, sessionObj);
@@ -179,11 +189,7 @@ export async function createNewBrowserSession(
         ? creationError.message
         : String(creationError);
     process.stderr.write(
-      `[SessionManager] Creating session ${newSessionId} failed: ${
-        creationError instanceof Error
-          ? creationError.message
-          : String(creationError)
-      }`
+      `[SessionManager] Creating session ${newSessionId} failed: ${errorMessage}\n`
     ); 
     throw new Error(
       `Failed to create/connect session ${newSessionId}: ${errorMessage}`
@@ -195,15 +201,19 @@ async function closeBrowserGracefully(
   session: BrowserSession | undefined | null,
   sessionIdToLog: string
 ): Promise<void> {
-  if (session?.browser?.isConnected()) {
-    process.stderr.write(
-      `[SessionManager] Closing browser for session: ${sessionIdToLog}\n`
-    );
+  // Close Stagehand instance which handles browser cleanup
+  if (session?.stagehand) {
     try {
-      await session.browser.close();
+      process.stderr.write(
+        `[SessionManager] Closing Stagehand for session: ${sessionIdToLog}\n`
+      );
+      await session.stagehand.close();
+      process.stderr.write(
+        `[SessionManager] Successfully closed Stagehand and browser for session: ${sessionIdToLog}\n`
+      );
     } catch (closeError) {
       process.stderr.write(
-        `[SessionManager] WARN - Error closing browser for session ${sessionIdToLog}: ${
+        `[SessionManager] WARN - Error closing Stagehand for session ${sessionIdToLog}: ${
           closeError instanceof Error ? closeError.message : String(closeError)
         }\n`
       );
@@ -284,7 +294,6 @@ export async function getSession(
     try {
       return await ensureDefaultSessionInternal(config);
     } catch (error) {
-      // ensureDefaultSessionInternal already logs extensively
       process.stderr.write(
         `[SessionManager] Failed to get default session due to error in ensureDefaultSessionInternal for ${sessionId}. See previous messages for details.\n`
       );

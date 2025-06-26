@@ -1,5 +1,5 @@
 {
-  "name": "@browserbasehq/mcp-stagehand",
+  "name": "@browserbasehq/mcp",
   "version": "0.5.1",
   "description": "MCP server for AI web browser automation using Stagehand",
   "license": "MIT",
@@ -24,9 +24,8 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "@browserbasehq/sdk": "^2.0.0",
-    "@browserbasehq/stagehand": "^2.0.0",
-    "@modelcontextprotocol/sdk": "^1.13.0",
+    "@browserbasehq/stagehand": "^2.4.0",
+    "@modelcontextprotocol/sdk": "^1.13.1",
     "@playwright/test": "^1.49.0",
     "commander": "^14.0.0"
   },

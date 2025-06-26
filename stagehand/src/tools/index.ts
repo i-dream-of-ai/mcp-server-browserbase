@@ -24,13 +24,4 @@ export const TOOLS = [
   screenshotTool,
 ];
 
-// Export tools by category
-export const coreTools = [
-  navigateTool,
-  actTool,
-  extractTool,
-  observeTool,
-  screenshotTool,
-];
-
 export const sessionManagementTools = sessionTools; 
