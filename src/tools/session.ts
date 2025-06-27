@@ -28,7 +28,7 @@ type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
 const createSessionSchema: ToolSchema<typeof CreateSessionInputSchema> = {
   name: "browserbase_session_create",
   description:
-    "Create or reuse a cloud browser session using Browserbase with fully initialized Stagehand. This creates the browser session with all configuration flags (proxies, stealth, viewport, cookies, etc.) and initializes Stagehand to work with that session. Updates the active session.",
+    "Create or reuse a single cloud browser session using Browserbase with fully initialized Stagehand. WARNING: This tool is for SINGLE browser workflows only. If you need multiple browser sessions running simultaneously (parallel scraping, A/B testing, multiple accounts), use 'multi_browserbase_stagehand_session_create' instead. This creates one browser session with all configuration flags (proxies, stealth, viewport, cookies, etc.) and initializes Stagehand to work with that session. Updates the active session.",
   inputSchema: CreateSessionInputSchema,
 };
 

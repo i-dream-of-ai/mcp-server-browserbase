@@ -14,7 +14,7 @@ export const create = async (
   config: Config,
   params: CreateSessionParams = {},
 ): Promise<StagehandSession> => {
-  const id = randomUUID();
+  const id = randomUUID() + "_" + Date.now();
 
   // Merge config with params
   const apiKey = params.apiKey || config.browserbaseApiKey;

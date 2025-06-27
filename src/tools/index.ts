@@ -35,13 +35,13 @@ export const multiSessionTools = [
 
 // Export all tools as array
 export const TOOLS = [
+  ...multiSessionTools,
   ...sessionTools,
   navigateTool,
   actTool,
   extractTool,
   observeTool,
   screenshotTool,
-  ...multiSessionTools,
 ];
 
 export const sessionManagementTools = sessionTools;

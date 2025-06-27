@@ -78,15 +78,15 @@ function createMultiSessionAwareTool<TInput extends InputType>(
 export const createSessionTool = defineTool({
   capability: "create_session",
   schema: {
-    name: "multi-browserbase_stagehand_session_create",
+    name: "multi_browserbase_stagehand_session_create",
     description:
-      "Create a new Stagehand browser session with full web automation capabilities. This initializes a fresh browser instance that can navigate, interact with elements, extract data, and take screenshots. Each session is isolated and can be managed independently. Use this when you need to start web automation tasks or when you need multiple parallel browser sessions.",
+      "Create parallel browser session for multi-session workflows. Use this when you need multiple browser instances running simultaneously: parallel data scraping, concurrent automation, A/B testing, multiple user accounts, cross-site operations, batch processing, or any task requiring more than one browser. Creates an isolated browser session with independent cookies, authentication, and state. Always pair with session-specific tools (those ending with '_session'). Perfect for scaling automation tasks that require multiple browsers working in parallel.",
     inputSchema: z.object({
       name: z
         .string()
         .optional()
         .describe(
-          "Optional human-readable name for the session to help track multiple sessions (e.g. 'login-flow', 'data-scraping', 'testing-checkout')",
+          "Highly recommended: Descriptive name for tracking multiple sessions (e.g. 'amazon-scraper', 'user-login-flow', 'checkout-test-1'). Makes debugging and session management much easier!",
         ),
       browserbaseSessionID: z
         .string()
@@ -142,7 +142,7 @@ export const listSessionsTool = defineTool({
   schema: {
     name: "browserbase_stagehand_session_list",
     description:
-      "List all currently active Stagehand browser sessions with their details. Use this to see what sessions are available, check their status, and get session IDs for use with other tools. Helpful for managing multiple concurrent browser automation tasks.",
+      "Track all parallel sessions: Critical tool for multi-session management! Shows all active browser sessions with their IDs, names, ages, and Browserbase session IDs. Use this frequently to monitor your parallel automation workflows, verify sessions are running, and get session IDs for session-specific tools. Essential for debugging and resource management in complex multi-browser scenarios.",
     inputSchema: z.object({}),
   },
   handle: async (): Promise<ToolResult> => {
@@ -193,14 +193,14 @@ export const listSessionsTool = defineTool({
 export const closeSessionTool = defineTool({
   capability: "close_session",
   schema: {
-    name: "multi-browserbase_stagehand_session_close",
+    name: "multi_browserbase_stagehand_session_close",
     description:
-      "Close and clean up a specific Stagehand browser session. This will terminate the browser instance, end the Browserbase session, and free up resources. Use this when you're done with a session to avoid leaving sessions running unnecessarily. Important: Once closed, the session ID cannot be reused.",
+      "Cleanup parallel session for multi-session workflows. Properly terminates a browser session, ends the Browserbase session, and frees cloud resources. Always use this when finished with a session to avoid resource waste and billing charges. Critical for responsible multi-session automation - each unclosed session continues consuming resources!",
     inputSchema: z.object({
       sessionId: z
         .string()
         .describe(
-          "The exact session ID to close. You can get session IDs from the 'stagehand_session_list' tool. Make sure this is the correct session as this action cannot be undone.",
+          "Exact session ID to close (get from 'browserbase_stagehand_session_list'). Double-check this ID - once closed, the session cannot be recovered!",
         ),
     }),
   },
@@ -230,22 +230,22 @@ export const closeSessionTool = defineTool({
 export const navigateWithSessionTool = createMultiSessionAwareTool(
   navigateTool,
   {
-    namePrefix: "multi-",
+    namePrefix: "multi_",
     nameSuffix: "_session",
   },
 );
 
 export const actWithSessionTool = createMultiSessionAwareTool(actTool, {
-  namePrefix: "multi-",
+  namePrefix: "multi_",
   nameSuffix: "_session",
 });
 
 export const extractWithSessionTool = createMultiSessionAwareTool(extractTool, {
-  namePrefix: "multi-",
+  namePrefix: "multi_",
   nameSuffix: "_session",
 });
 
 export const observeWithSessionTool = createMultiSessionAwareTool(observeTool, {
-  namePrefix: "multi-",
+  namePrefix: "multi_",
   nameSuffix: "_session",
 });

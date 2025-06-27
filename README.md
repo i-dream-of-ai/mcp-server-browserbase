@@ -339,7 +339,7 @@ The server supports managing multiple independent browser sessions in parallel, 
 
 #### Session Lifecycle Management
 
-- **multi-browserbase_stagehand_session_create**
+- **multi_browserbase_stagehand_session_create**
   - Create a new independent Stagehand browser session with full web automation capabilities
   - Each session is isolated with its own browser instance, cookies, and state
   - Inputs:
@@ -356,7 +356,7 @@ The server supports managing multiple independent browser sessions in parallel, 
   - Output:
     - Comprehensive list of active sessions with status information
 
-- **multi-browserbase_stagehand_session_close**
+- **multi_browserbase_stagehand_session_close**
   - Close and clean up a specific Stagehand browser session
   - Terminates browser instance, ends Browserbase session, and frees resources
   - Input:
@@ -368,26 +368,26 @@ The server supports managing multiple independent browser sessions in parallel, 
 
 All core browser automation tools are available with session-specific variants:
 
-- **multi-browserbase_stagehand_navigate_session**
+- **multi_browserbase_stagehand_navigate_session**
   - Navigate to a URL in a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
     - `url` (string): The URL to navigate to
 
-- **multi-browserbase_stagehand_act_session**
+- **multi_browserbase_stagehand_act_session**
   - Perform an action in a specific browser session using natural language
   - Inputs:
     - `sessionId` (string): The session ID to use
     - `action` (string): The action to perform (e.g., "click the login button")
     - `variables` (object, optional): Variables for sensitive data in action templates
 
-- **multi-browserbase_stagehand_extract_session**
+- **multi_browserbase_stagehand_extract_session**
   - Extract structured information from a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
     - `instruction` (string): What to extract from the page
 
-- **multi-browserbase_stagehand_observe_session**
+- **multi_browserbase_stagehand_observe_session**
   - Observe and find actionable elements in a specific browser session
   - Inputs:
     - `sessionId` (string): The session ID to use
@@ -519,7 +519,7 @@ The server supports two session management approaches:
    - Automatically manages the active session
 
 2. **Multi-Session Mode**: Advanced approach with multiple parallel browser sessions
-   - Tools: `multi-browserbase_stagehand_session_create`, `multi-browserbase_stagehand_session_close`, `browserbase_stagehand_session_list`
+   - Tools: `multi_browserbase_stagehand_session_create`, `multi_browserbase_stagehand_session_close`, `browserbase_stagehand_session_list`
    - Session-specific variants of all core tools (with `_session` suffix)
    - Ideal for complex workflows requiring parallel browser instances
    - Each session maintains independent state, cookies, and browser context
