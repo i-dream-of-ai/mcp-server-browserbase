@@ -140,9 +140,9 @@ export const createSessionTool = defineTool({
 export const listSessionsTool = defineTool({
   capability: "list_sessions",
   schema: {
-    name: "browserbase_stagehand_session_list",
+    name: "multi_browserbase_stagehand_session_list",
     description:
-      "Track all parallel sessions: Critical tool for multi-session management! Shows all active browser sessions with their IDs, names, ages, and Browserbase session IDs. Use this frequently to monitor your parallel automation workflows, verify sessions are running, and get session IDs for session-specific tools. Essential for debugging and resource management in complex multi-browser scenarios.",
+      "ONLY WORKS WITH MULTI-SESSION TOOLS! Track all parallel sessions: Critical tool for multi-session management! Shows all active browser sessions with their IDs, names, ages, and Browserbase session IDs. Use this frequently to monitor your parallel automation workflows, verify sessions are running, and get session IDs for session-specific tools. Essential for debugging and resource management in complex multi-browser scenarios.",
     inputSchema: z.object({}),
   },
   handle: async (): Promise<ToolResult> => {
@@ -200,7 +200,7 @@ export const closeSessionTool = defineTool({
       sessionId: z
         .string()
         .describe(
-          "Exact session ID to close (get from 'browserbase_stagehand_session_list'). Double-check this ID - once closed, the session cannot be recovered!",
+          "Exact session ID to close (get from 'multi_browserbase_stagehand_session_list'). Double-check this ID - once closed, the session cannot be recovered!",
         ),
     }),
   },

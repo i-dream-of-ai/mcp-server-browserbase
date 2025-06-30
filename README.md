@@ -349,7 +349,7 @@ The server supports managing multiple independent browser sessions in parallel, 
   - Output:
     - Session ID and Browserbase session ID with live debugger URL
 
-- **browserbase_stagehand_session_list**
+- **multi_browserbase_stagehand_session_list**
   - List all currently active Stagehand browser sessions with detailed metadata
   - Shows session IDs, names, Browserbase session IDs, creation time, and age
   - No inputs required
@@ -519,7 +519,7 @@ The server supports two session management approaches:
    - Automatically manages the active session
 
 2. **Multi-Session Mode**: Advanced approach with multiple parallel browser sessions
-   - Tools: `multi_browserbase_stagehand_session_create`, `multi_browserbase_stagehand_session_close`, `browserbase_stagehand_session_list`
+   - Tools: `multi_browserbase_stagehand_session_create`, `multi_browserbase_stagehand_session_close`, `multi_browserbase_stagehand_session_list`
    - Session-specific variants of all core tools (with `_session` suffix)
    - Ideal for complex workflows requiring parallel browser instances
    - Each session maintains independent state, cookies, and browser context

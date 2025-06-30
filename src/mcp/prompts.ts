@@ -63,7 +63,7 @@ MULTI-SESSION INDICATORS - Use multi-session tools when you see:
 
 MULTI-SESSION WORKFLOW:
 1. Create sessions: "multi_browserbase_stagehand_session_create" (give descriptive names)
-2. Track sessions: "browserbase_stagehand_session_list"
+2. Track sessions: "multi_browserbase_stagehand_session_list"
 3. Use session tools: "multi_browserbase_stagehand_navigate_session", etc.
 4. Cleanup: "multi_browserbase_stagehand_session_close"
 
@@ -105,7 +105,7 @@ TOOL NAMING PATTERNS:
 
 RECOMMENDED WORKFLOW:
 1. Create sessions: "multi_browserbase_stagehand_session_create" (give each a descriptive name)
-2. List sessions: "browserbase_stagehand_session_list" (to track active sessions)
+2. List sessions: "multi_browserbase_stagehand_session_list" (to track active sessions)
 3. Use session-specific tools: "multi_browserbase_stagehand_navigate_session", "multi_browserbase_stagehand_act_session", etc.
 4. Clean up: "multi_browserbase_stagehand_session_close" when done
 
