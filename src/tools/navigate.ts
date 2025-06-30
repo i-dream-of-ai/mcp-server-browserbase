@@ -22,7 +22,9 @@ async function handleNavigate(
 ): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
+      const stagehand = await context.getStagehand();
       const page = await context.getActivePage();
+
       if (!page) {
         throw new Error("No active page available");
       }
@@ -36,7 +38,7 @@ async function handleNavigate(
           },
           {
             type: "text",
-            text: `View the live session here: https://browserbase.com/sessions/${context.currentSessionId}`,
+            text: `View the live session here: https://www.browserbase.com/sessions/${stagehand.browserbaseSessionID}`,
           },
         ],
       };

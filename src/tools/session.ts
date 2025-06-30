@@ -76,7 +76,7 @@ async function handleCreateSession(
       );
 
       process.stderr.write(
-        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.sessionId}`,
+        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.stagehand.browserbaseSessionID}`,
       );
 
       return {
