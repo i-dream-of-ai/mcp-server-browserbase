@@ -65,7 +65,7 @@ cd mcp-server-browserbase
 npm install && npm run build
 ```
 
-Then in your MCP Config JSON run the server. To run locally we can use STDIO or self-host over SSE.
+Then in your MCP Config JSON run the server. To run locally we can use STDIO or self-host SHTTP.
 
 ### STDIO:
 
@@ -100,7 +100,7 @@ Then in your MCP Config JSON file put the following:
 {
   "mcpServers": {
     "browserbase": {
-      "url": "http://localhost:8931/sse",
+      "url": "http://localhost:8931/mcp",
       "env": {
         "BROWSERBASE_API_KEY": "",
         "BROWSERBASE_PROJECT_ID": ""
@@ -124,7 +124,7 @@ The Browserbase MCP server accepts the following command-line flags:
 | `--advancedStealth`           | Enable Browserbase Advanced Stealth (Only for Scale Plan Users)             |
 | `--contextId <contextId>`     | Specify a Browserbase Context ID to use                                     |
 | `--persist [boolean]`         | Whether to persist the Browserbase context (default: true)                  |
-| `--port <port>`               | Port to listen on for HTTP/SSE transport                                    |
+| `--port <port>`               | Port to listen on for HTTP/SHTTP transport                                  |
 | `--host <host>`               | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
 | `--cookies [json]`            | JSON array of cookies to inject into the browser                            |
 | `--browserWidth <width>`      | Browser viewport width (default: 1024)                                      |
@@ -421,7 +421,7 @@ mcp-server-browserbase/
 │   ├── sessionManager.ts         # Browserbase session lifecycle management
 │   ├── stagehandStore.ts         # Multi-session store for managing parallel browser sessions
 │   ├── program.ts                # CLI program setup using Commander.js
-│   ├── transport.ts              # HTTP/SSE and STDIO transport handlers
+│   ├── transport.ts              # HTTP/SHTTP and STDIO transport handlers
 │   ├── server.ts                 # Server list management
 │   ├── utils.ts                  # Utility functions
 │   ├── mcp/                      # MCP protocol implementations
@@ -466,7 +466,7 @@ mcp-server-browserbase/
 
 **program.ts** - CLI program setup using Commander.js with all command-line options, argument parsing, and transport initialization.
 
-**transport.ts** - Transport layer implementations for STDIO and HTTP/SSE communication with session management across different connection types.
+**transport.ts** - Transport layer implementations for STDIO and HTTP/SHTTP communication with session management across different connection types.
 
 **server.ts** - Server list management providing factory patterns for server creation and handling multiple concurrent connections.
 
@@ -543,6 +543,6 @@ For more information about the Model Context Protocol, visit:
 
 ## License
 
-Licensed under the MIT License.
+Licensed under the Apache 2.0 License.
 
 Copyright 2025 Browserbase, Inc.
