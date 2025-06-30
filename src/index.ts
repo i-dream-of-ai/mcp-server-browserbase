@@ -32,7 +32,6 @@ const cookieSchema = z.object({
 });
 
 // Configuration schema for Smithery - matches existing Config interface
-// @ts-expect-error Type instantiation is excessively deep and possibly infinite with complex Zod schemas
 export const configSchema = z.object({
   browserbaseApiKey: z.string().describe("The Browserbase API Key to use"),
   browserbaseProjectId: z

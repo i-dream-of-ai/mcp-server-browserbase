@@ -72,6 +72,7 @@ BEST PRACTICES:
 - Always close sessions when done to free resources
 - Take screenshots for visual confirmation or debugging
 - Each session maintains independent state and authentication
+- No need to create backup sessions - sessions are reliable and persistent
 
 When using this server, think of it as controlling real browsers in the cloud. You can navigate, click, type, extract data, and capture screenshots just like a human would, but with the precision and scale of automation.`,
           },
@@ -113,6 +114,7 @@ IMPORTANT RULES:
 - Each session maintains independent cookies, authentication, and browser state
 - Always close sessions when finished to free resources
 - Use descriptive session names for easier tracking
+- No need to create backup sessions - sessions are reliable and persistent
 
 SINGLE VS MULTI-SESSION:
 - Single: "browserbase_session_create" → "browserbase_stagehand_navigate" 
