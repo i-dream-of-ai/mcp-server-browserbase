@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@browserbasehq/stagehand':
         specifier: ^2.4.0
-        version: 2.4.0(deepmerge@4.3.1)(dotenv@16.5.0)(react@19.1.0)(zod@3.25.67)
+        version: 2.4.0(deepmerge@4.3.1)(dotenv@17.0.0)(react@19.1.0)(zod@3.25.67)
       '@modelcontextprotocol/sdk':
         specifier: ^1.13.1
         version: 1.13.1
@@ -20,6 +20,12 @@ importers:
       commander:
         specifier: ^14.0.0
         version: 14.0.0
+      dotenv:
+        specifier: ^17.0.0
+        version: 17.0.0
+      playwright-core:
+        specifier: ^1.53.2
+        version: 1.53.2
       zod:
         specifier: ^3.25.67
         version: 3.25.67
@@ -602,8 +608,8 @@ packages:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
 
-  dotenv@16.5.0:
-    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
+  dotenv@17.0.0:
+    resolution: {integrity: sha512-A0BJ5lrpJVSfnMMXjmeO0xUnoxqsBHWCoqqTnGwGYVdnctqXXUEhJOO7LxmgxJon9tEZFGpe0xPRX0h2v3AANQ==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -1419,6 +1425,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.53.2:
+    resolution: {integrity: sha512-ox/OytMy+2w1jcYEYlOo1Hhp8hZkLCximMTUTMBXjGUA1KoFfiSZ+DU+3a739jsPY0yoKH2TFy9S2fsJas8yAw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.53.1:
     resolution: {integrity: sha512-LJ13YLr/ocweuwxyGf1XNFWIU4M2zUSo149Qbp+A4cpwDjsxRPj7k6H25LBrEHiEwxvRbD8HdwvQmRMSvquhYw==}
     engines: {node: '>=18'}
@@ -2011,7 +2022,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@browserbasehq/stagehand@2.4.0(deepmerge@4.3.1)(dotenv@16.5.0)(react@19.1.0)(zod@3.25.67)':
+  '@browserbasehq/stagehand@2.4.0(deepmerge@4.3.1)(dotenv@17.0.0)(react@19.1.0)(zod@3.25.67)':
     dependencies:
       '@anthropic-ai/sdk': 0.39.0
       '@browserbasehq/sdk': 2.6.0
@@ -2019,7 +2030,7 @@ snapshots:
       ai: 4.3.16(react@19.1.0)(zod@3.25.67)
       deepmerge: 4.3.1
       devtools-protocol: 0.0.1464554
-      dotenv: 16.5.0
+      dotenv: 17.0.0
       fetch-cookie: 3.1.0
       openai: 4.104.0(ws@8.18.2)(zod@3.25.67)
       pino: 9.7.0
@@ -2544,7 +2555,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  dotenv@16.5.0: {}
+  dotenv@17.0.0: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -3527,6 +3538,8 @@ snapshots:
   pkce-challenge@5.0.0: {}
 
   playwright-core@1.53.1: {}
+
+  playwright-core@1.53.2: {}
 
   playwright@1.53.1:
     dependencies:
