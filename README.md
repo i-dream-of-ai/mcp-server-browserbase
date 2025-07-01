@@ -130,6 +130,7 @@ The Browserbase MCP server accepts the following command-line flags:
 | `--browserWidth <width>`      | Browser viewport width (default: 1024)                                      |
 | `--browserHeight <height>`    | Browser viewport height (default: 768)                                      |
 | `--modelName <model>`         | The model to use for Stagehand (default: google/gemini-2.0-flash)           |
+| `--modelApiKey <key>`         | API key for the custom model provider (required when using custom models)   |
 
 These flags can be passed directly to the CLI or configured in your MCP configuration file.
 
@@ -256,6 +257,8 @@ Here's how to use it for custom browser sizing. We recommend to stick with 16:9 
 
 Stagehand defaults to using Google's Gemini 2.0 Flash model, but you can configure it to use other models like GPT-4o, Claude, or other providers.
 
+**Important**: When using any custom model (non-default), you must provide your own API key for that model provider using the `--modelApiKey` flag.
+
 Here's how to configure different models:
 
 ```json
@@ -263,7 +266,36 @@ Here's how to configure different models:
   "mcpServers": {
     "browserbase": {
       "command": "npx",
-      "args": ["@browserbasehq/mcp", "--modelName", "gpt-4o"],
+      "args": [
+        "@browserbasehq/mcp",
+        "--modelName",
+        "gpt-4o",
+        "--modelApiKey",
+        "your-openai-api-key"
+      ],
+      "env": {
+        "BROWSERBASE_API_KEY": "",
+        "BROWSERBASE_PROJECT_ID": ""
+      }
+    }
+  }
+}
+```
+
+For Claude models:
+
+```json
+{
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": [
+        "@browserbasehq/mcp",
+        "--modelName",
+        "claude-3-5-sonnet-latest",
+        "--modelApiKey",
+        "your-anthropic-api-key"
+      ],
       "env": {
         "BROWSERBASE_API_KEY": "",
         "BROWSERBASE_PROJECT_ID": ""
@@ -280,7 +312,7 @@ Available models include:
 - **Claude**: `claude-3-5-sonnet-latest`, `claude-3-7-sonnet-latest`
 - **Other providers**: Cerebras, Groq, and more
 
-_Note: The model must be supported in Stagehand. Check out the docs [here](https://docs.stagehand.dev/examples/custom_llms#supported-llms)._
+_Note: The model must be supported in Stagehand. Check out the docs [here](https://docs.stagehand.dev/examples/custom_llms#supported-llms). When using any custom model, you must provide your own API key for that provider._
 
 ## Tools
 

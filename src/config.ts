@@ -22,6 +22,7 @@ export type CLIOptions = {
   browserWidth?: number;
   browserHeight?: number;
   modelName?: typeof AvailableModelSchema;
+  modelApiKey?: string;
 };
 
 // Default Configuration Values
@@ -92,6 +93,7 @@ export async function configFromCLIOptions(
     advancedStealth: cliOptions.advancedStealth,
     cookies: cliOptions.cookies,
     modelName: cliOptions.modelName,
+    modelApiKey: cliOptions.modelApiKey,
   };
 }
 

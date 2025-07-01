@@ -60,6 +60,10 @@ program
     "--modelName <model>",
     "The model to use for Stagehand (default: google/gemini-2.0-flash)",
   )
+  .option(
+    "--modelApiKey <key>",
+    "API key for the custom model provider (required when using custom models)",
+  )
   .action(async (options) => {
     const config = await resolveConfig(options);
     const serverList = new ServerList(async () =>

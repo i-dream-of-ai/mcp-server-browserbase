@@ -32,61 +32,87 @@ const cookieSchema = z.object({
 });
 
 // Configuration schema for Smithery - matches existing Config interface
-export const configSchema = z.object({
-  browserbaseApiKey: z.string().describe("The Browserbase API Key to use"),
-  browserbaseProjectId: z
-    .string()
-    .describe("The Browserbase Project ID to use"),
-  proxies: z
-    .boolean()
-    .optional()
-    .describe("Whether or not to use Browserbase proxies"),
-  advancedStealth: z
-    .boolean()
-    .optional()
-    .describe(
-      "Use advanced stealth mode. Only available to Browserbase Scale Plan users",
-    ),
-  context: z
-    .object({
-      contextId: z.string().optional().describe("The ID of the context to use"),
-      persist: z
-        .boolean()
-        .optional()
-        .describe("Whether or not to persist the context"),
-    })
-    .optional(),
-  viewPort: z
-    .object({
-      browserWidth: z.number().optional().describe("The width of the browser"),
-      browserHeight: z
-        .number()
-        .optional()
-        .describe("The height of the browser"),
-    })
-    .optional(),
-  cookies: z
-    .array(cookieSchema)
-    .optional()
-    .describe("Cookies to inject into the Browserbase context"),
-  server: z
-    .object({
-      port: z
-        .number()
-        .optional()
-        .describe("The port to listen on for SSE or MCP transport"),
-      host: z
-        .string()
-        .optional()
-        .describe(
-          "The host to bind the server to. Default is localhost. Use 0.0.0.0 to bind to all interfaces",
-        ),
-    })
-    .optional(),
-  modelName: AvailableModelSchema.optional().describe(
-    "The model to use for Stagehand (default: google/gemini-2.0-flash)",
-  ), // Already an existing Zod Enum
-});
+export const configSchema = z
+  .object({
+    browserbaseApiKey: z.string().describe("The Browserbase API Key to use"),
+    browserbaseProjectId: z
+      .string()
+      .describe("The Browserbase Project ID to use"),
+    proxies: z
+      .boolean()
+      .optional()
+      .describe("Whether or not to use Browserbase proxies"),
+    advancedStealth: z
+      .boolean()
+      .optional()
+      .describe(
+        "Use advanced stealth mode. Only available to Browserbase Scale Plan users",
+      ),
+    context: z
+      .object({
+        contextId: z
+          .string()
+          .optional()
+          .describe("The ID of the context to use"),
+        persist: z
+          .boolean()
+          .optional()
+          .describe("Whether or not to persist the context"),
+      })
+      .optional(),
+    viewPort: z
+      .object({
+        browserWidth: z
+          .number()
+          .optional()
+          .describe("The width of the browser"),
+        browserHeight: z
+          .number()
+          .optional()
+          .describe("The height of the browser"),
+      })
+      .optional(),
+    cookies: z
+      .array(cookieSchema)
+      .optional()
+      .describe("Cookies to inject into the Browserbase context"),
+    server: z
+      .object({
+        port: z
+          .number()
+          .optional()
+          .describe("The port to listen on for SSE or MCP transport"),
+        host: z
+          .string()
+          .optional()
+          .describe(
+            "The host to bind the server to. Default is localhost. Use 0.0.0.0 to bind to all interfaces",
+          ),
+      })
+      .optional(),
+    modelName: AvailableModelSchema.optional().describe(
+      "The model to use for Stagehand (default: google/gemini-2.0-flash)",
+    ), // Already an existing Zod Enum
+    modelApiKey: z
+      .string()
+      .optional()
+      .describe(
+        "API key for the custom model provider. Required when using a model other than the default google/gemini-2.0-flash",
+      ),
+  })
+  .refine(
+    (data) => {
+      // If any model is explicitly specified, API key is required
+      if (data.modelName) {
+        return data.modelApiKey !== undefined && data.modelApiKey.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "modelApiKey is required when specifying a custom model",
+      path: ["modelApiKey"],
+    },
+  );
 
 // Default function for Smithery
 export default function ({ config }: { config: z.infer<typeof configSchema> }) {

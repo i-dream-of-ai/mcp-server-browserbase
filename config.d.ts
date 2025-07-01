@@ -78,4 +78,9 @@ export type Config = {
    * @default "google/gemini-2.0-flash"
    */
   modelName?: AvailableModelSchema;
+  /**
+   * API key for the custom model provider
+   * Required when using a model other than the default google/gemini-2.0-flash
+   */
+  modelApiKey?: string;
 };
