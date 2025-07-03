@@ -51,6 +51,11 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
   if (!mergedConfig.browserbaseProjectId) {
     mergedConfig.browserbaseProjectId = process.env.BROWSERBASE_PROJECT_ID;
   }
+
+  if (!mergedConfig.modelApiKey) {
+    mergedConfig.modelApiKey = process.env.GEMINI_API_KEY;
+  }
+
   // --------------------------------
 
   // Basic validation for Browserbase keys
@@ -61,6 +66,9 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
     console.warn(
       "Warning: BROWSERBASE_PROJECT_ID environment variable not set.",
     );
+  }
+  if (!mergedConfig.modelApiKey) {
+    console.warn("Warning: GEMINI_API_KEY environment variable not set.");
   }
 
   return mergedConfig;
