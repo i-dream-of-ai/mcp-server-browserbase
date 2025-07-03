@@ -26,7 +26,7 @@
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "clean": "rm -rf dist",
-    "npm-publish": "pnpm clean && pnpm build && npm publish"
+    "publish": "pnpm clean && pnpm build && npm publish"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,scss,md}": [

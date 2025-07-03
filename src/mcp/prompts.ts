@@ -18,11 +18,6 @@ export const PROMPTS = [
       "Guidance on when and how to use multi-session browser automation",
     arguments: [],
   },
-  {
-    name: "click_search_button",
-    description: "A prompt template for clicking on a search button",
-    arguments: [], // No arguments required for this specific prompt
-  },
 ];
 
 /**
@@ -119,22 +114,6 @@ IMPORTANT RULES:
 SINGLE VS MULTI-SESSION:
 - Single: "browserbase_session_create" → "browserbase_stagehand_navigate" 
 - Multi: "multi_browserbase_stagehand_session_create" → "multi_browserbase_stagehand_navigate_session"`,
-          },
-        },
-      ],
-    };
-  }
-
-  if (name === "click_search_button") {
-    return {
-      description:
-        "This prompt provides instructions for clicking on a search button",
-      messages: [
-        {
-          role: "user",
-          content: {
-            type: "text",
-            text: "Please click on the search button",
           },
         },
       ],

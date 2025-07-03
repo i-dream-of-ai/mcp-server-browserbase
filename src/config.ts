@@ -1,7 +1,3 @@
-import os from "os";
-import fs from "fs";
-import path from "path";
-import { sanitizeForFilePath } from "./utils.js";
 import type { Cookie } from "playwright-core";
 import type { Config } from "../config.js";
 import { AvailableModelSchema } from "@browserbasehq/stagehand";
@@ -95,17 +91,6 @@ export async function configFromCLIOptions(
     modelName: cliOptions.modelName,
     modelApiKey: cliOptions.modelApiKey,
   };
-}
-
-// Create an output file path within the configured output directory
-export async function outputFile(
-  config: Config,
-  name: string,
-): Promise<string> {
-  const outputDir = os.tmpdir();
-  await fs.promises.mkdir(outputDir, { recursive: true });
-  const sanitizedName = sanitizeForFilePath(name);
-  return path.join(outputDir, sanitizedName);
 }
 
 // Helper function to merge config objects, excluding undefined values

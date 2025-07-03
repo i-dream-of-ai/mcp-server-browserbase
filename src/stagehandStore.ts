@@ -104,10 +104,18 @@ export const create = async (
   );
 
   // Set up disconnect handler
-  browser.on("disconnected", () => {
+  const disconnectHandler = () => {
     process.stderr.write(`[StagehandStore] Session disconnected: ${id}\n`);
     store.delete(id);
-  });
+  };
+
+  browser.on("disconnected", disconnectHandler);
+
+  // Store the handler for cleanup
+  session.metadata = {
+    ...session.metadata,
+    disconnectHandler,
+  };
 
   return session;
 };
@@ -141,6 +149,10 @@ export const remove = async (id: string): Promise<void> => {
   process.stderr.write(`[StagehandStore] Removing session: ${id}\n`);
 
   try {
+    if (session.metadata?.disconnectHandler) {
+      session.browser.off("disconnected", session.metadata.disconnectHandler);
+    }
+
     await session.stagehand.close();
     process.stderr.write(`[StagehandStore] Session closed: ${id}\n`);
   } catch (error) {
@@ -149,9 +161,9 @@ export const remove = async (id: string): Promise<void> => {
         error instanceof Error ? error.message : String(error)
       }\n`,
     );
+  } finally {
+    store.delete(id);
   }
-
-  store.delete(id);
 };
 
 /**

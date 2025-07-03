@@ -64,7 +64,13 @@ async function handleCreateSession(
         );
       }
 
-      if (!session || !session.browser || !session.page || !session.sessionId) {
+      if (
+        !session ||
+        !session.browser ||
+        !session.page ||
+        !session.sessionId ||
+        !session.stagehand
+      ) {
         throw new Error(
           `SessionManager failed to return a valid session object with actualSessionId for ID: ${targetSessionId}`,
         );
@@ -76,7 +82,7 @@ async function handleCreateSession(
       );
 
       process.stderr.write(
-        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.stagehand.browserbaseSessionID}`,
+        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.sessionId}`,
       );
 
       return {
@@ -192,7 +198,7 @@ async function handleCloseSession(context: Context): Promise<ToolResult> {
     if (stagehandClosedSuccessfully) {
       let successMessage = `Browserbase session (${previousSessionId || "default"}) closed successfully via Stagehand. Context reset to default.`;
       if (browserbaseSessionId && previousSessionId !== defaultSessionId) {
-        successMessage += ` View replay at https://browserbase.com/sessions/${browserbaseSessionId}`;
+        successMessage += ` View replay at https://www.browserbase.com/sessions/${browserbaseSessionId}`;
       }
       return { content: [{ type: "text", text: successMessage }] };
     }

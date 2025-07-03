@@ -25,6 +25,16 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 
 [Smithery](https://smithery.ai/server/@browserbasehq/mcp-browserbase)
 
+## Prerequisites
+
+This project uses [pnpm](https://pnpm.io/) as the package manager. If you don't have pnpm installed, you can install it via:
+
+```bash
+npm install -g pnpm
+# or
+curl -fsSL https://get.pnpm.io/install.sh | sh
+```
+
 ## How to Setup
 
 ### Quickstarts:
@@ -62,7 +72,7 @@ git clone https://github.com/browserbase/mcp-server-browserbase.git
 cd mcp-server-browserbase
 
 # Install the dependencies and build the project
-npm install && npm run build
+pnpm install && pnpm build
 ```
 
 Then in your MCP Config JSON run the server. To run locally we can use STDIO or self-host SHTTP.
@@ -111,6 +121,54 @@ Then in your MCP Config JSON file put the following:
 ```
 
 Then reload your MCP client and you should be good to go!
+
+## Development
+
+### Getting Started
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/browserbase/mcp-server-browserbase.git
+   cd mcp-server-browserbase
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Build the project:**
+
+   ```bash
+   pnpm run build
+   ```
+
+4. **Run in development mode:**
+   ```bash
+   pnpm run watch
+   ```
+
+### Available Scripts
+
+- `pnpm build` - Build the TypeScript project
+- `pnpm watch` - Watch for changes and rebuild
+- `pnpm lint` - Run ESLint
+- `pnpm prettier:check` - Check code formatting
+- `pnpm prettier:fix` - Fix code formatting
+- `pnpm clean` - Clean build artifacts
+- `pnpm publish` - Build and publish to npm registry
+
+### Publishing
+
+To publish a new version:
+
+```bash
+pnpm run publish
+```
+
+This will clean, build, and publish the package using pnpm's built-in publishing capabilities.
 
 ## Configuration
 
