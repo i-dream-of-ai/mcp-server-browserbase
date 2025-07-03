@@ -8,23 +8,19 @@ import type { Config } from "../config.js";
 const store = new Map<string, StagehandSession>();
 
 /**
- * Create a new Stagehand session
+ * Create a configured Stagehand instance
  */
-export const create = async (
+export const createStagehandInstance = async (
   config: Config,
   params: CreateSessionParams = {},
-): Promise<StagehandSession> => {
-  const id = randomUUID() + "_" + Date.now();
-
-  // Merge config with params
+  sessionId: string,
+): Promise<Stagehand> => {
   const apiKey = params.apiKey || config.browserbaseApiKey;
   const projectId = params.projectId || config.browserbaseProjectId;
 
   if (!apiKey || !projectId) {
     throw new Error("Browserbase API Key and Project ID are required");
   }
-
-  process.stderr.write(`[StagehandStore] Creating new session ${id}...\n`);
 
   const stagehand = new Stagehand({
     env: "BROWSERBASE",
@@ -34,12 +30,12 @@ export const create = async (
       config.modelName ||
       "google/gemini-2.0-flash") as AvailableModel,
     modelClientOptions: {
-      apiKey: process.env.GEMINI_API_KEY, //TODO:
+      apiKey: config.modelApiKey || process.env.GEMINI_API_KEY,
     },
     ...(params.browserbaseSessionID && {
       browserbaseSessionID: params.browserbaseSessionID,
     }),
-    browserbaseSessionCreateParams: params.browserbaseSessionCreateParams || {
+    browserbaseSessionCreateParams: {
       projectId,
       proxies: config.proxies,
       browserSettings: {
@@ -57,11 +53,27 @@ export const create = async (
       },
     },
     logger: (logLine) => {
-      console.error(`Stagehand[${id}]: ${logLine.message}`);
+      console.error(`Stagehand[${sessionId}]: ${logLine.message}`);
     },
   });
 
   await stagehand.init();
+  return stagehand;
+};
+
+/**
+ * Create a new Stagehand session
+ */
+export const create = async (
+  config: Config,
+  params: CreateSessionParams = {},
+): Promise<StagehandSession> => {
+  // Global ID, must be 100% Unique
+  const id = randomUUID() + "_" + config.browserbaseProjectId;
+
+  process.stderr.write(`[StagehandStore] Creating new session ${id}...\n`);
+
+  const stagehand = await createStagehandInstance(config, params, id);
 
   const page = stagehand.page as unknown as Page;
   const browser = page.context().browser();

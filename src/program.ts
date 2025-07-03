@@ -20,7 +20,8 @@ try {
 } catch {
   // Fallback for CommonJS or when import.meta is not available
   __filename =
-    (globalThis as any).__filename || process.cwd() + "/dist/program.js";
+    (globalThis as { __filename: string }).__filename ||
+    process.cwd() + "/dist/program.js";
   __dirname = path.dirname(__filename);
 }
 

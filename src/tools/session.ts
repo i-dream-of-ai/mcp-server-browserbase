@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
-import type { ToolActionResult } from "../context.js";
+import type { ToolActionResult } from "../types/types.js";
 
 // Import SessionManager functions
 import {
@@ -10,8 +10,8 @@ import {
   ensureDefaultSessionInternal,
   cleanupSession,
   getSession,
-  type BrowserSession,
 } from "../sessionManager.js";
+import type { BrowserSession } from "../types/types.js";
 
 // --- Tool: Create Session ---
 const CreateSessionInputSchema = z.object({
@@ -113,13 +113,7 @@ const createSessionTool: Tool<typeof CreateSessionInputSchema> = {
 };
 
 // --- Tool: Close Session ---
-const CloseSessionInputSchema = z.object({
-  random_string: z
-    .string()
-    .optional()
-    .describe("Dummy parameter to ensure consistent tool call format."),
-});
-type CloseSessionInput = z.infer<typeof CloseSessionInputSchema>;
+const CloseSessionInputSchema = z.object({});
 
 const closeSessionSchema: ToolSchema<typeof CloseSessionInputSchema> = {
   name: "browserbase_session_close",
@@ -128,10 +122,7 @@ const closeSessionSchema: ToolSchema<typeof CloseSessionInputSchema> = {
   inputSchema: CloseSessionInputSchema,
 };
 
-async function handleCloseSession(
-  context: Context,
-  _params: CloseSessionInput,
-): Promise<ToolResult> {
+async function handleCloseSession(context: Context): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     // Store the current session ID before it's potentially changed.
     const previousSessionId = context.currentSessionId;

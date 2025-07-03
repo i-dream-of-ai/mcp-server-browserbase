@@ -1,14 +1,9 @@
-import { Browser, Page } from "playwright-core";
-import { AvailableModel, Stagehand } from "@browserbasehq/stagehand";
+import { Page } from "playwright-core";
+import { BrowserContext } from "@browserbasehq/stagehand";
 import type { Config } from "../config.js";
 import type { Cookie } from "playwright-core";
-
-export type BrowserSession = {
-  browser: Browser;
-  page: Page;
-  sessionId: string;
-  stagehand: Stagehand;
-};
+import { createStagehandInstance } from "./stagehandStore.js";
+import type { BrowserSession } from "./types/types.js";
 
 // Global state for managing browser sessions
 const browsers = new Map<string, BrowserSession>();
@@ -50,7 +45,7 @@ export function getActiveSessionId(): string {
  * @param cookies Array of cookies to add
  */
 export async function addCookiesToContext(
-  context: any,
+  context: BrowserContext,
   cookies: Cookie[],
 ): Promise<void> {
   if (!cookies || cookies.length === 0) {
@@ -92,40 +87,14 @@ export async function createNewBrowserSession(
       `[SessionManager] ${resumeSessionId ? "Resuming" : "Creating"} Stagehand session ${newSessionId}...\n`,
     );
 
-    // Create and initialize Stagehand instance
-    const stagehand = new Stagehand({
-      env: "BROWSERBASE",
-      apiKey: config.browserbaseApiKey,
-      projectId: config.browserbaseProjectId,
-      modelName: (config.modelName ||
-        "google/gemini-2.0-flash") as AvailableModel,
-      modelClientOptions: {
-        apiKey: process.env.GEMINI_API_KEY, // TODO: change this in prod to just use our key
+    // Create and initialize Stagehand instance using shared function
+    const stagehand = await createStagehandInstance(
+      config,
+      {
+        ...(resumeSessionId && { browserbaseSessionID: resumeSessionId }),
       },
-      ...(resumeSessionId && { browserbaseSessionID: resumeSessionId }),
-      browserbaseSessionCreateParams: {
-        projectId: config.browserbaseProjectId!,
-        proxies: config.proxies,
-        browserSettings: {
-          viewport: {
-            width: config.viewPort?.browserWidth ?? 1024,
-            height: config.viewPort?.browserHeight ?? 768,
-          },
-          context: config.context?.contextId
-            ? {
-                id: config.context?.contextId,
-                persist: config.context?.persist ?? true,
-              }
-            : undefined,
-          advancedStealth: config.advancedStealth ?? undefined,
-        },
-      },
-      logger: (logLine) => {
-        console.error(`Stagehand[${newSessionId}]: ${logLine.message}`);
-      },
-    });
-
-    await stagehand.init();
+      newSessionId,
+    );
 
     // Get the page and browser from Stagehand
     const page = stagehand.page as unknown as Page;
@@ -171,7 +140,10 @@ export async function createNewBrowserSession(
       Array.isArray(config.cookies) &&
       config.cookies.length > 0
     ) {
-      await addCookiesToContext(page.context(), config.cookies);
+      await addCookiesToContext(
+        page.context() as BrowserContext,
+        config.cookies,
+      );
     }
 
     const sessionObj: BrowserSession = {
@@ -306,7 +278,7 @@ export async function getSession(
   if (sessionId === defaultSessionId && createIfMissing) {
     try {
       return await ensureDefaultSessionInternal(config);
-    } catch (error) {
+    } catch {
       process.stderr.write(
         `[SessionManager] Failed to get default session due to error in ensureDefaultSessionInternal for ${sessionId}. See previous messages for details.\n`,
       );
@@ -385,7 +357,7 @@ export async function closeAllSessions(): Promise<void> {
   }
   try {
     await Promise.all(closePromises);
-  } catch (_e) {
+  } catch {
     // Individual errors are caught and logged by closeBrowserGracefully
     process.stderr.write(
       `[SessionManager] WARN - Some errors occurred during batch session closing. See individual messages.\n`,

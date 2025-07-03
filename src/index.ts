@@ -3,7 +3,7 @@ dotenv.config();
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { Tool } from "./tools/tool.js";
+import type { MCPToolsArray } from "./types/types.js";
 
 import { Context } from "./context.js";
 import type { Config } from "../config.js";
@@ -185,7 +185,7 @@ export default function ({ config }: { config: z.infer<typeof configSchema> }) {
     return prompt;
   });
 
-  const tools: Tool<any>[] = [...TOOLS];
+  const tools: MCPToolsArray = [...TOOLS];
 
   // Register each tool with the Smithery server
   tools.forEach((tool) => {

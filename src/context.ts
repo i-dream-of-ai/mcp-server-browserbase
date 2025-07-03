@@ -1,22 +1,10 @@
 import type { Stagehand } from "@browserbasehq/stagehand";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Config } from "../config.js";
-import {
-  CallToolResult,
-  TextContent,
-  ImageContent,
-} from "@modelcontextprotocol/sdk/types.js";
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { listResources, readResource } from "./mcp/resources.js";
-import {
-  getSession,
-  defaultSessionId,
-  type BrowserSession,
-} from "./sessionManager.js";
-
-export type ToolActionResult =
-  | { content?: (ImageContent | TextContent)[] }
-  | undefined
-  | void;
+import { getSession, defaultSessionId } from "./sessionManager.js";
+import type { MCPTool, BrowserSession } from "./types/types.js";
 
 export class Context {
   public readonly config: Config;
@@ -69,7 +57,7 @@ export class Context {
     return session.browser;
   }
 
-  async run(tool: any, args: any): Promise<CallToolResult> {
+  async run(tool: MCPTool, args: unknown): Promise<CallToolResult> {
     try {
       console.error(
         `Executing tool: ${tool.schema.name} with args: ${JSON.stringify(args)}`,
@@ -77,7 +65,7 @@ export class Context {
 
       // Check if this tool has a handle method (new tool system)
       if ("handle" in tool && typeof tool.handle === "function") {
-        const toolResult = await tool.handle(this as any, args);
+        const toolResult = await tool.handle(this, args);
 
         if (toolResult?.action) {
           const actionResult = await toolResult.action();

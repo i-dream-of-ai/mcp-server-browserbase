@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
-import type { ToolActionResult } from "../context.js";
+import type { ToolActionResult } from "../types/types.js";
 import { screenshots } from "../mcp/resources.js";
 
 const ScreenshotInputSchema = z.object({

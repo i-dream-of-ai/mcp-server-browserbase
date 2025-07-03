@@ -51,7 +51,10 @@ function createMultiSessionAwareTool<TInput extends InputType>(
       description: `${originalTool.schema.description} (for a specific session)`,
       inputSchema: newInputSchema,
     },
-    handle: async (context: Context, params: any): Promise<ToolResult> => {
+    handle: async (
+      context: Context,
+      params: z.infer<typeof newInputSchema>,
+    ): Promise<ToolResult> => {
       const { sessionId, ...originalParams } = params;
 
       // Get the session
@@ -94,22 +97,15 @@ export const createSessionTool = defineTool({
         .describe(
           "Resume an existing Browserbase session by providing its session ID. Use this to continue work in a previously created browser session that may have been paused or disconnected.",
         ),
-      browserbaseSessionCreateParams: z
-        .any()
-        .optional()
-        .describe(
-          "Advanced Browserbase session configuration parameters for customizing browser settings, viewport, user agent, etc. Leave empty for default settings.",
-        ),
     }),
   },
   handle: async (
     context: Context,
-    { name, browserbaseSessionID, browserbaseSessionCreateParams },
+    { name, browserbaseSessionID },
   ): Promise<ToolResult> => {
     try {
       const params: CreateSessionParams = {
         browserbaseSessionID,
-        browserbaseSessionCreateParams,
         meta: name ? { name } : undefined,
       };
 
