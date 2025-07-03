@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@browserbasehq/stagehand':
         specifier: ^2.4.0
-        version: 2.4.0(deepmerge@4.3.1)(dotenv@17.0.0)(react@19.1.0)(zod@3.25.67)
+        version: 2.4.0(deepmerge@4.3.1)(dotenv@16.6.1)(react@19.1.0)(zod@3.25.67)
       '@modelcontextprotocol/sdk':
         specifier: ^1.13.1
         version: 1.13.1
@@ -21,8 +21,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0
       dotenv:
-        specifier: ^17.0.0
-        version: 17.0.0
+        specifier: ^16.4.6
+        version: 16.6.1
       playwright-core:
         specifier: ^1.53.2
         version: 1.53.2
@@ -608,8 +608,8 @@ packages:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
 
-  dotenv@17.0.0:
-    resolution: {integrity: sha512-A0BJ5lrpJVSfnMMXjmeO0xUnoxqsBHWCoqqTnGwGYVdnctqXXUEhJOO7LxmgxJon9tEZFGpe0xPRX0h2v3AANQ==}
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -2022,7 +2022,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@browserbasehq/stagehand@2.4.0(deepmerge@4.3.1)(dotenv@17.0.0)(react@19.1.0)(zod@3.25.67)':
+  '@browserbasehq/stagehand@2.4.0(deepmerge@4.3.1)(dotenv@16.6.1)(react@19.1.0)(zod@3.25.67)':
     dependencies:
       '@anthropic-ai/sdk': 0.39.0
       '@browserbasehq/sdk': 2.6.0
@@ -2030,7 +2030,7 @@ snapshots:
       ai: 4.3.16(react@19.1.0)(zod@3.25.67)
       deepmerge: 4.3.1
       devtools-protocol: 0.0.1464554
-      dotenv: 17.0.0
+      dotenv: 16.6.1
       fetch-cookie: 3.1.0
       openai: 4.104.0(ws@8.18.2)(zod@3.25.67)
       pino: 9.7.0
@@ -2555,7 +2555,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  dotenv@17.0.0: {}
+  dotenv@16.6.1: {}
 
   dunder-proto@1.0.1:
     dependencies:

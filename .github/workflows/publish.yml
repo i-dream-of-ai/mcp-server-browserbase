@@ -19,7 +19,6 @@ jobs:
         with:
           version: 8
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
       - run: pnpm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

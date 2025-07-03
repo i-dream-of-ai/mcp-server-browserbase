@@ -94,6 +94,11 @@ export function startHttpTransport(
   const sseSessions = new Map<string, SSEServerTransport>();
   const streamableSessions = new Map<string, StreamableHTTPServerTransport>();
   const httpServer = http.createServer(async (req, res) => {
+    if (!req.url) {
+      res.statusCode = 400;
+      res.end("Bad request: missing URL");
+      return;
+    }
     const url = new URL(`http://localhost${req.url}`);
     if (url.pathname.startsWith("/mcp"))
       await handleStreamable(req, res, serverList, streamableSessions);

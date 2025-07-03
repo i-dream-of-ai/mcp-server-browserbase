@@ -38,7 +38,8 @@ async function handleScreenshot(
         ? `screenshot-${params.name}-${new Date()
             .toISOString()
             .replace(/:/g, "-")}`
-        : `screenshot-${new Date().toISOString().replace(/:/g, "-")}`;
+        : `screenshot-${new Date().toISOString().replace(/:/g, "-")}` +
+          context.config.browserbaseProjectId;
       screenshots.set(name, screenshotBase64);
 
       // Notify the client that the resources changed
