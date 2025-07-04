@@ -22,6 +22,8 @@
     "build": "tsc && shx chmod +x dist/*.js",
     "prepare": "husky",
     "watch": "tsc --watch",
+    "smithery": "npx @smithery/cli dev",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
     "lint": "eslint . --ext .ts",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
