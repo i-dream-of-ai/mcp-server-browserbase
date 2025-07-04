@@ -1,5 +1,6 @@
-runtime: "typescript"
+runtime: "container"
 build:
   dockerfile: "Dockerfile"
   dockerBuildPath: "."
-  dockerfilePath: "./Dockerfile"
+startCommand:
+  type: "http"
