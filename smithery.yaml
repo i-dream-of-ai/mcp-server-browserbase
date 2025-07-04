@@ -2,3 +2,4 @@ runtime: "typescript"
 build:
   dockerfile: "Dockerfile"
   dockerBuildPath: "."
+  dockerfilePath: "./Dockerfile"
