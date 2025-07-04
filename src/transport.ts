@@ -4,7 +4,6 @@ import crypto from "node:crypto";
 
 import { ServerList } from "./server.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type { Config } from "../config.js";
 
@@ -76,44 +75,6 @@ The server will now attempt to start, but will likely fail without the API key..
   await server.connect(new StdioServerTransport());
 }
 
-async function handleSSE(
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
-  url: URL,
-  serverList: ServerList,
-  sessions: Map<string, SSEServerTransport>,
-) {
-  if (req.method === "POST") {
-    const sessionId = url.searchParams.get("sessionId");
-    if (!sessionId) {
-      res.statusCode = 400;
-      return res.end("Missing sessionId");
-    }
-
-    const transport = sessions.get(sessionId);
-    if (!transport) {
-      res.statusCode = 404;
-      return res.end("Session not found");
-    }
-
-    return await transport.handlePostMessage(req, res);
-  } else if (req.method === "GET") {
-    const transport = new SSEServerTransport("/sse", res);
-    sessions.set(transport.sessionId, transport);
-    const server = await serverList.create();
-    res.on("close", () => {
-      sessions.delete(transport.sessionId);
-      serverList.close(server).catch((e) => {
-        console.error(e);
-      });
-    });
-    return await server.connect(transport);
-  }
-
-  res.statusCode = 405;
-  res.end("Method not allowed");
-}
-
 async function handleStreamable(
   req: http.IncomingMessage,
   res: http.ServerResponse,
@@ -155,7 +116,6 @@ export function startHttpTransport(
   hostname: string | undefined,
   serverList: ServerList,
 ) {
-  const sseSessions = new Map<string, SSEServerTransport>();
   const streamableSessions = new Map<string, StreamableHTTPServerTransport>();
   const httpServer = http.createServer(async (req, res) => {
     if (!req.url) {
@@ -166,7 +126,6 @@ export function startHttpTransport(
     const url = new URL(`http://localhost${req.url}`);
     if (url.pathname.startsWith("/mcp"))
       await handleStreamable(req, res, serverList, streamableSessions);
-    else await handleSSE(req, res, url, serverList, sseSessions);
   });
   httpServer.listen(port, hostname, () => {
     const address = httpServer.address();
@@ -189,7 +148,7 @@ export function startHttpTransport(
         {
           mcpServers: {
             browserbase: {
-              url: `${url}/sse`,
+              url: `${url}/mcp`,
             },
           },
         },

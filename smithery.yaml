@@ -1,3 +1,4 @@
 runtime: "typescript"
-packageManager: "pnpm"
-buildCommand: "pnpm build"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."

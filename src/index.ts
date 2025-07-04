@@ -81,7 +81,7 @@ export const configSchema = z
         port: z
           .number()
           .optional()
-          .describe("The port to listen on for SSE or MCP transport"),
+          .describe("The port to listen on for SHTTP or MCP transport"),
         host: z
           .string()
           .optional()

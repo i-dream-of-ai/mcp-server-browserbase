@@ -63,7 +63,7 @@ export type Config = {
    */
   server?: {
     /**
-     * The port to listen on for SSE or MCP transport.
+     * The port to listen on for SHTTP or MCP transport.
      */
     port?: number;
     /**

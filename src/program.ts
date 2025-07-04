@@ -46,7 +46,7 @@ program
     "Whether to persist the Browserbase context",
     true,
   )
-  .option("--port <port>", "Port to listen on for SSE transport.")
+  .option("--port <port>", "Port to listen on for SHTTP transport.")
   .option(
     "--host <host>",
     "Host to bind server to. Default is localhost. Use 0.0.0.0 to bind to all interfaces.",
