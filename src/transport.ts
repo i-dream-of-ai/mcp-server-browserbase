@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import { ServerList } from "./server.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import type { Config } from "../config.js";
+import type { Config } from "../config.d.ts";
 
 export async function startStdioTransport(
   serverList: ServerList,

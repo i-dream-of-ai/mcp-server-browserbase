@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { Stagehand, AvailableModel } from "@browserbasehq/stagehand";
 import { Page } from "playwright-core";
 import { StagehandSession, CreateSessionParams } from "./types/types.js";
-import type { Config } from "../config.js";
+import type { Config } from "../config.d.ts";
 
 // Store for all active sessions
 const store = new Map<string, StagehandSession>();

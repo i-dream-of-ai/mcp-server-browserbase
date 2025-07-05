@@ -8,6 +8,9 @@ COPY package.json pnpm-lock.yaml tsconfig.json ./
 # Copy source code
 COPY src ./src
 
+# Copy config files
+COPY config.d.ts index.d.ts ./
+
 # Install dependencies and build
 RUN corepack enable && pnpm install --frozen-lockfile && pnpm build
 
@@ -15,9 +18,13 @@ RUN corepack enable && pnpm install --frozen-lockfile && pnpm build
 FROM node:lts-alpine
 WORKDIR /app
 
+# Copy package.json and install production dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --prod --frozen-lockfile --ignore-scripts
+
 # Copy built artifacts and required files
 COPY --from=builder /app/dist ./dist
-COPY index.js config.d.ts index.d.ts cli.js ./ 
+COPY index.js config.d.ts index.d.ts cli.js ./
 
 # Expose HTTP port
 EXPOSE 8080

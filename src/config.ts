@@ -1,5 +1,5 @@
 import type { Cookie } from "playwright-core";
-import type { Config } from "../config.js";
+import type { Config } from "../config.d.ts";
 import { AvailableModelSchema } from "@browserbasehq/stagehand";
 
 export type ToolCapability = "core" | string;

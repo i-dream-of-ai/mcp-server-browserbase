@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { MCPToolsArray } from "./types/types.js";
 
 import { Context } from "./context.js";
-import type { Config } from "../config.js";
+import type { Config } from "../config.d.ts";
 import { TOOLS } from "./tools/index.js";
 import { AvailableModelSchema } from "@browserbasehq/stagehand";
 import { PROMPTS, getPrompt } from "./mcp/prompts.js";

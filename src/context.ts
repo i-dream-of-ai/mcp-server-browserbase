@@ -1,6 +1,6 @@
 import type { Stagehand } from "@browserbasehq/stagehand";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import type { Config } from "../config.js";
+import type { Config } from "../config.d.ts";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { listResources, readResource } from "./mcp/resources.js";
 import { getSession, defaultSessionId } from "./sessionManager.js";
