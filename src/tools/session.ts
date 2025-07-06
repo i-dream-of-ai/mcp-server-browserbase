@@ -161,7 +161,7 @@ async function handleCloseSession(context: Context): Promise<ToolResult> {
         );
 
         // Clean up the session from tracking
-        cleanupSession(previousSessionId);
+        await cleanupSession(previousSessionId);
 
         if (browserbaseSessionId) {
           process.stderr.write(

@@ -324,8 +324,14 @@ export async function getSession(
  * This is called after a browser is closed to ensure proper cleanup.
  * @param sessionId The session ID to clean up
  */
-export function cleanupSession(sessionId: string): void {
+export async function cleanupSession(sessionId: string): Promise<void> {
   process.stderr.write(`[SessionManager] Cleaning up session: ${sessionId}\n`);
+
+  // Get the session to close it gracefully
+  const session = browsers.get(sessionId);
+  if (session) {
+    await closeBrowserGracefully(session, sessionId);
+  }
 
   // Remove from browsers map
   browsers.delete(sessionId);
