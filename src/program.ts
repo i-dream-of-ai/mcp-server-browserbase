@@ -85,8 +85,11 @@ program
 function setupExitWatchdog(serverList: ServerList) {
   const handleExit = async () => {
     setTimeout(() => process.exit(0), 15000);
-    await stagehandStore.removeAll();
-    await serverList.closeAll();
+    try {
+      await Promise.all([stagehandStore.removeAll(), serverList.closeAll()]);
+    } catch (error) {
+      console.error("Error during cleanup:", error);
+    }
     process.exit(0);
   };
 

@@ -2,23 +2,23 @@
 FROM node:lts-alpine AS builder
 WORKDIR /app
 
-# Copy package and configuration
-COPY package.json pnpm-lock.yaml tsconfig.json ./
+# Copy package files first for dependency caching
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy configuration and source code
+COPY tsconfig.json ./
 COPY src ./src
-
-# Copy config files
 COPY config.d.ts index.d.ts ./
 
-# Install dependencies and build
-RUN corepack enable && pnpm install --frozen-lockfile && pnpm build
+# Build the application
+RUN pnpm build
 
 # ----- Production Stage -----
 FROM node:lts-alpine
 WORKDIR /app
 
-# Copy package.json and install production dependencies
+# Copy package files and install production dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable && pnpm install --prod --frozen-lockfile --ignore-scripts
 
