@@ -58,17 +58,24 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
 
   // --------------------------------
 
-  // Basic validation for Browserbase keys
+  // Basic validation for Browserbase keys - provide dummy values if not set
   if (!mergedConfig.browserbaseApiKey) {
-    console.warn("Warning: BROWSERBASE_API_KEY environment variable not set.");
+    console.warn(
+      "Warning: BROWSERBASE_API_KEY environment variable not set. Using dummy value.",
+    );
+    mergedConfig.browserbaseApiKey = "dummy-browserbase-api-key";
   }
   if (!mergedConfig.browserbaseProjectId) {
     console.warn(
-      "Warning: BROWSERBASE_PROJECT_ID environment variable not set.",
+      "Warning: BROWSERBASE_PROJECT_ID environment variable not set. Using dummy value.",
     );
+    mergedConfig.browserbaseProjectId = "dummy-browserbase-project-id";
   }
   if (!mergedConfig.modelApiKey) {
-    console.warn("Warning: GEMINI_API_KEY environment variable not set.");
+    console.warn(
+      "Warning: MODEL_API_KEY environment variable not set. Using dummy value.",
+    );
+    mergedConfig.modelApiKey = "dummy-api-key";
   }
 
   return mergedConfig;
