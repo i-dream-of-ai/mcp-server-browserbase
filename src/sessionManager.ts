@@ -1,5 +1,4 @@
-import { Page } from "playwright-core";
-import { BrowserContext } from "@browserbasehq/stagehand";
+import { Page, BrowserContext } from "@browserbasehq/stagehand";
 import type { Config } from "../config.d.ts";
 import type { Cookie } from "playwright-core";
 import { createStagehandInstance } from "./stagehandStore.js";

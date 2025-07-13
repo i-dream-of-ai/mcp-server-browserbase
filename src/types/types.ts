@@ -1,5 +1,4 @@
-import type { Stagehand } from "@browserbasehq/stagehand";
-import type { Browser, Page } from "playwright-core";
+import type { Stagehand, Browser, Page } from "@browserbasehq/stagehand";
 import { ImageContent, TextContent } from "@modelcontextprotocol/sdk/types.js";
 import { Tool } from "../tools/tool.js";
 import { InputType } from "../tools/tool.js";
