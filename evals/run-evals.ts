@@ -3,6 +3,8 @@
 import { Command } from "commander";
 import * as fs from "fs/promises";
 import * as path from "path";
+import { evaluate } from "mcpvals";
+import chalk from "chalk";
 
 // Load environment variables from .env file
 import { config } from "dotenv";
@@ -26,38 +28,7 @@ interface EvaluationReport {
   config: Record<string, unknown>;
   evaluations: EvaluationResult[];
   passed: boolean;
-  timestamp: string;
-}
-
-// Dynamic import for optional dependencies
-async function loadDependencies() {
-  try {
-    const mcpvalsModule = "mcpvals";
-    const chalkModule = "chalk";
-
-    const [mcpvals, chalk] = await Promise.all([
-      import(mcpvalsModule).catch(() => {
-        throw new Error("mcpvals package not found");
-      }),
-      import(chalkModule).catch(() => {
-        throw new Error("chalk package not found");
-      }),
-    ]);
-    return {
-      evaluate: mcpvals.evaluate,
-      chalk: chalk.default,
-    };
-  } catch (error) {
-    console.error(
-      "Missing dependencies. Please install with: npm install mcpvals chalk",
-    );
-    console.error("Or run: npm run test:install");
-    console.error(
-      "Error details:",
-      error instanceof Error ? error.message : String(error),
-    );
-    process.exit(1);
-  }
+  timestamp: Date;
 }
 
 interface TestResult {
@@ -94,7 +65,6 @@ program
   .option("-t, --timeout <ms>", "Override timeout in milliseconds")
   .action(async (options) => {
     try {
-      const { evaluate, chalk } = await loadDependencies();
       const startTime = Date.now();
 
       // Check for required environment variables
@@ -115,17 +85,32 @@ program
           chalk.yellow("Please set them before running the tests."),
         );
         console.error(chalk.yellow("Example:"));
-        console.error(
-          chalk.yellow("  export BROWSERBASE_API_KEY='your_api_key_here'"),
-        );
-        console.error(
-          chalk.yellow(
-            "  export BROWSERBASE_PROJECT_ID='your_project_id_here'",
-          ),
-        );
-        console.error(
-          chalk.yellow("  export ANTHROPIC_API_KEY='sk-ant-your_key_here'"),
-        );
+
+        for (const missingVar of missingVars) {
+          switch (missingVar) {
+            case "BROWSERBASE_API_KEY":
+              console.error(
+                chalk.yellow(
+                  "  export BROWSERBASE_API_KEY='your_api_key_here'",
+                ),
+              );
+              break;
+            case "BROWSERBASE_PROJECT_ID":
+              console.error(
+                chalk.yellow(
+                  "  export BROWSERBASE_PROJECT_ID='your_project_id_here'",
+                ),
+              );
+              break;
+            case "ANTHROPIC_API_KEY":
+              console.error(
+                chalk.yellow(
+                  "  export ANTHROPIC_API_KEY='sk-ant-your_key_here'",
+                ),
+              );
+              break;
+          }
+        }
         process.exit(1);
       }
 
@@ -150,7 +135,11 @@ program
       // Prepare evaluation options
       const evalOptions = {
         debug: options.debug,
-        reporter: options.json ? "json" : "console",
+        reporter: (options.json ? "json" : "console") as
+          | "json"
+          | "console"
+          | "junit"
+          | undefined,
         llmJudge: options.llm,
         timeout: options.timeout ? parseInt(options.timeout) : undefined,
       };
@@ -212,7 +201,6 @@ program
   .option("-v, --verbose", "Show detailed comparison")
   .action(async (file1, file2, options) => {
     try {
-      const { chalk } = await loadDependencies();
       const results1: EvaluationReport = JSON.parse(
         await fs.readFile(file1, "utf-8"),
       );
@@ -274,39 +262,6 @@ program
       }
     } catch (error) {
       console.error("Error comparing results:", error);
-      process.exit(1);
-    }
-  });
-
-program
-  .command("install")
-  .description("Install required dependencies")
-  .action(async () => {
-    try {
-      const { execSync } = await import("child_process");
-
-      console.log("Installing MCPVals and dependencies...");
-
-      // Check if package.json exists
-      const packageJsonPath = path.resolve("package.json");
-      const packageJsonExists = await fs
-        .access(packageJsonPath)
-        .then(() => true)
-        .catch(() => false);
-
-      if (!packageJsonExists) {
-        console.error(
-          "package.json not found. Please run this from the project root.",
-        );
-        process.exit(1);
-      }
-
-      // Install dependencies
-      execSync("npm install mcpvals chalk commander", { stdio: "inherit" });
-
-      console.log("✓ Dependencies installed successfully!");
-    } catch (error) {
-      console.error("Error installing dependencies:", error);
       process.exit(1);
     }
   });

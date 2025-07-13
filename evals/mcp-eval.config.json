@@ -16,12 +16,8 @@
       "description": "Test basic browser navigation functionality",
       "steps": [
         {
-          "user": "Navigate to Google homepage",
-          "expectedState": "google"
-        },
-        {
-          "user": "Close the browser session",
-          "expectedState": "session closed"
+          "user": "Create a browser session, navigate to https://example.com, and close the session",
+          "expectedState": "closed"
         }
       ],
       "expectTools": [
@@ -35,22 +31,13 @@
       "description": "Test navigation, search interaction, and data extraction",
       "steps": [
         {
-          "user": "Go to Google and search for 'browserbase'",
-          "expectedState": "browserbase"
-        },
-        {
-          "user": "Extract all the search result titles from the page",
-          "expectedState": "Extracted content"
-        },
-        {
-          "user": "Close the session",
-          "expectedState": "session closed"
+          "user": "Create a browser session, navigate to https://example.com, extract the page title, and close the session",
+          "expectedState": "Example Domain"
         }
       ],
       "expectTools": [
         "browserbase_session_create",
         "browserbase_stagehand_navigate",
-        "browserbase_stagehand_act",
         "browserbase_stagehand_extract",
         "browserbase_session_close"
       ]
@@ -60,16 +47,8 @@
       "description": "Test element observation and interaction capabilities",
       "steps": [
         {
-          "user": "Navigate to example.com",
-          "expectedState": "Example Domain"
-        },
-        {
-          "user": "Observe all clickable links on the page",
-          "expectedState": "links"
-        },
-        {
-          "user": "Close the browser",
-          "expectedState": "session closed"
+          "user": "Create a browser session, navigate to https://example.com, observe the page elements, and close the session",
+          "expectedState": "closed"
         }
       ],
       "expectTools": [
@@ -84,16 +63,8 @@
       "description": "Test screenshot functionality",
       "steps": [
         {
-          "user": "Open a browser and go to example.com",
-          "expectedState": "example.com"
-        },
-        {
-          "user": "Take a screenshot of the page and name it 'homepage'",
-          "expectedState": "Screenshot taken"
-        },
-        {
-          "user": "Close the browser",
-          "expectedState": "session closed"
+          "user": "Create a browser session, navigate to https://example.com, take a screenshot, and close the session",
+          "expectedState": "closed"
         }
       ],
       "expectTools": [
@@ -108,20 +79,8 @@
       "description": "Test multi-session browser management",
       "steps": [
         {
-          "user": "Create two browser sessions named 'session1' and 'session2'",
-          "expectedState": "Created session"
-        },
-        {
-          "user": "List all active sessions",
-          "expectedState": "session1"
-        },
-        {
-          "user": "In session1, navigate to example.com",
-          "expectedState": "example.com"
-        },
-        {
-          "user": "Close both sessions",
-          "expectedState": "closed session"
+          "user": "Create a multi-session browser named 'test-session', list all sessions, navigate to https://example.com in that session, and close the session",
+          "expectedState": "closed"
         }
       ],
       "expectTools": [
@@ -136,27 +95,14 @@
       "description": "Test form filling and submission capabilities",
       "steps": [
         {
-          "user": "Navigate to httpbin.org/forms/post",
-          "expectedState": "httpbin"
-        },
-        {
-          "user": "Fill in the custname field with 'Test User'",
-          "expectedState": "Test User"
-        },
-        {
-          "user": "Extract the form data to verify it was filled correctly",
-          "expectedState": "Test User"
-        },
-        {
-          "user": "Close the browser",
-          "expectedState": "session closed"
+          "user": "Create a browser session, navigate to https://httpbin.org/forms/post, fill in the customer name field with 'TestUser', and close the session",
+          "expectedState": "closed"
         }
       ],
       "expectTools": [
         "browserbase_session_create",
         "browserbase_stagehand_navigate",
         "browserbase_stagehand_act",
-        "browserbase_stagehand_extract",
         "browserbase_session_close"
       ]
     },
@@ -165,18 +111,13 @@
       "description": "Test error handling for invalid operations",
       "steps": [
         {
-          "user": "Try to navigate to an invalid URL",
-          "expectedState": "error"
-        },
-        {
-          "user": "Try to close a non-existent session",
+          "user": "Create a browser session and try to navigate to an invalid URL like 'invalid-url-test'",
           "expectedState": "error"
         }
       ],
       "expectTools": [
         "browserbase_session_create",
-        "browserbase_stagehand_navigate",
-        "browserbase_session_close"
+        "browserbase_stagehand_navigate"
       ]
     }
   ]

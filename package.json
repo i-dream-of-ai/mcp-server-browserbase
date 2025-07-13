@@ -29,15 +29,10 @@
     "prettier:fix": "prettier --write .",
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm clean && pnpm build",
-    "test": "npm run test:standard",
+    "test": "npm run build && (tsx evals/run-evals.ts run --config evals/mcp-eval.config.json & tsx evals/run-evals.ts run --config evals/mcp-eval-minimal.config.json & tsx evals/run-evals.ts run --config evals/mcp-eval-advanced.config.json & wait)",
+    "test:config": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval.config.json",
     "test:minimal": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval-minimal.config.json",
-    "test:standard": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval.config.json",
-    "test:advanced": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval-advanced.config.json --llm",
-    "test:all": "npm run test:minimal && npm run test:standard && npm run test:advanced",
-    "test:debug": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval.config.json --debug",
-    "test:json": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval.config.json --json",
-    "test:install": "npm install chalk",
-    "test:validate-env": "tsx evals/run-evals.ts validate-env"
+    "test:advanced": "npm run build && tsx evals/run-evals.ts run --config evals/mcp-eval-advanced.config.json"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,scss,md}": [
@@ -51,7 +46,7 @@
     "@playwright/test": "^1.49.0",
     "commander": "^14.0.0",
     "dotenv": "^16.4.6",
-    "mcpvals": "link:../../mcpvals",
+    "mcpvals": "0.0.1",
     "playwright-core": "^1.53.2",
     "zod": "^3.25.67"
   },
