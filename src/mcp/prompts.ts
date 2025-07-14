@@ -18,6 +18,12 @@ export const PROMPTS = [
       "Guidance on when and how to use multi-session browser automation",
     arguments: [],
   },
+  {
+    name: "stagehand_usage",
+    description:
+      "Guidelines on how to use Stagehand's act, observe, and extract utilities effectively",
+    arguments: [],
+  },
 ];
 
 /**
@@ -114,6 +120,59 @@ IMPORTANT RULES:
 SINGLE VS MULTI-SESSION:
 - Single: "browserbase_session_create" → "browserbase_stagehand_navigate" 
 - Multi: "multi_browserbase_stagehand_session_create" → "multi_browserbase_stagehand_navigate_session"`,
+          },
+        },
+      ],
+    };
+  }
+
+  if (name === "stagehand_usage") {
+    return {
+      description:
+        "Guidelines on how to use Stagehand's act, observe, and extract utilities effectively",
+      messages: [
+        {
+          role: "system",
+          content: {
+            type: "text",
+            text: `Stagehand Usage Guidelines
+
+OVERVIEW:
+Stagehand extends Playwright with natural-language helpers (act, observe, extract) available via stagehand.page.
+
+INITIALISE:
+import { Stagehand } from "@browserbasehq/stagehand";
+const stagehand = new Stagehand(StagehandConfig);
+await stagehand.init();
+const { page, context } = stagehand;
+
+ACT:
+- Invoke atomic, single-step actions in plain language: page.act("Click the sign in button");
+- Avoid multi-step instructions such as "Type in the search bar and hit enter".
+- Cache observe results and pass them to act whenever possible to avoid DOM drift.
+
+OBSERVE:
+- Plan before acting: const [action] = await page.observe("Click the sign in button");
+- The returned ObserveResult array can be fed directly into page.act(action).
+
+EXTRACT:
+- Always call page.extract({ instruction, schema }) with a strict Zod schema.
+- For URLs use z.string().url(); for arrays wrap them in an object property.
+Example:
+const data = await page.extract({
+  instruction: "extract the text inside all buttons",
+  schema: z.object({ text: z.array(z.string()) }),
+});
+
+AGENT:
+Use stagehand.agent for autonomous multi-step tasks.
+
+BEST PRACTICES:
+- Keep actions atomic and specific.
+- Cache observe results to stabilise interactions.
+- Prefer explicit schemas to guarantee correct extraction.
+- Use observe to verify actions before invoking act.
+- Treat Stagehand as controlling real browsers – navigate, click, type, and extract exactly as a user would, but with automation scale.`,
           },
         },
       ],

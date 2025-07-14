@@ -41,6 +41,44 @@ curl -fsSL https://get.pnpm.io/install.sh | sh
 
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.png)](cursor://anysphere.cursor-deeplink/mcp/install?name=browserbase&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAYnJvd3NlcmJhc2VocS9tY3AiXSwiZW52Ijp7IkJST1dTRVJCQVNFX0FQSV9LRVkiOiIiLCJCUk9XU0VSQkFTRV9QUk9KRUNUX0lEIjoiIn19)
 
+We currently support 2 transports for our MCP server, STDIO and SHTTP. We recommend you use SHTTP with our remote hosted url to take advantage of the server at full capacity.
+
+## SHTTP:
+
+When using our remote hosted server, we eat the LLM costs of Gemini, the [best performing model](www.stagehand.dev/evals) in [Stagehand](www.stagehand.dev).
+
+To use the Browserbase MCP Server through our remote hosted URL, add the following to your configuration.
+
+If your client supports SHTTP outright:
+
+```json
+{
+  "mcpServers": {
+    "browserbase": {
+      "url": "mcp.browserbase.com/mcp?browserbaseApiKey=""&browserbaseProjectId=""",
+    }
+  }
+}
+```
+
+If your client doesn't support SHTTP outright:
+
+```json
+{
+  "mcpServers": {
+    "browserbase": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "mcp.browserbase.com/mcp?browserbaseApiKey=""&browserbaseProjectId="""
+        ],
+    }
+  }
+}
+```
+
+## STDIO:
+
 You can either use our Server hosted on NPM or run it completely locally by cloning this repo.
 
 ### To run on NPM (Recommended)
@@ -55,7 +93,8 @@ Go into your MCP Config JSON and add the Browserbase Server:
       "args": ["@browserbasehq/mcp"],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -89,7 +128,8 @@ To your MCP Config JSON file add the following:
       "args": ["/path/to/mcp-server-browserbase/cli.js"],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -113,7 +153,8 @@ Then in your MCP Config JSON file put the following:
       "url": "http://localhost:8931/mcp",
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -212,7 +253,8 @@ To use proxies, set the --proxies flag in your MCP Config:
       "args": ["@browserbasehq/mcp", "--proxies"],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -233,7 +275,8 @@ To use advanced stealth, set the --advancedStealth flag in your MCP Config:
       "args": ["@browserbasehq/mcp", "--advancedStealth"],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -254,7 +297,8 @@ To use contexts, set the --contextId flag in your MCP Config:
       "args": ["@browserbasehq/mcp", "--contextId", "<YOUR_CONTEXT_ID>"],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -279,7 +323,8 @@ You can inject cookies into the MCP by adding them to your MCP Config. Your cook
       ],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -304,7 +349,8 @@ Here's how to use it for custom browser sizing. We recommend to stick with 16:9 
       ],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -333,7 +379,8 @@ Here's how to configure different models:
       ],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
@@ -356,7 +403,8 @@ For Claude models:
       ],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": ""
+        "BROWSERBASE_PROJECT_ID": "",
+        "GEMINI_API_KEY": ""
       }
     }
   }
