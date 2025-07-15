@@ -23,8 +23,6 @@ export type CLIOptions = {
 
 // Default Configuration Values
 const defaultConfig: Config = {
-  browserbaseApiKey: process.env.BROWSERBASE_API_KEY,
-  browserbaseProjectId: process.env.BROWSERBASE_PROJECT_ID,
   proxies: false,
   server: {
     port: undefined,
@@ -45,13 +43,6 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
   const mergedConfig = mergeConfig(defaultConfig, cliConfig);
 
   // --- Add Browserbase Env Vars ---
-  if (!mergedConfig.browserbaseApiKey) {
-    mergedConfig.browserbaseApiKey = process.env.BROWSERBASE_API_KEY;
-  }
-  if (!mergedConfig.browserbaseProjectId) {
-    mergedConfig.browserbaseProjectId = process.env.BROWSERBASE_PROJECT_ID;
-  }
-
   if (!mergedConfig.modelApiKey) {
     mergedConfig.modelApiKey = process.env.GEMINI_API_KEY;
   }
@@ -59,17 +50,17 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
   // --------------------------------
 
   // Basic validation for Browserbase keys - provide dummy values if not set
-  if (!mergedConfig.browserbaseApiKey) {
+  if (!cliOptions.browserbaseApiKey) {
     console.warn(
       "Warning: BROWSERBASE_API_KEY environment variable not set. Using dummy value.",
     );
-    mergedConfig.browserbaseApiKey = "dummy-browserbase-api-key";
+    cliOptions.browserbaseApiKey = "dummy-browserbase-api-key";
   }
-  if (!mergedConfig.browserbaseProjectId) {
+  if (!cliOptions.browserbaseProjectId) {
     console.warn(
       "Warning: BROWSERBASE_PROJECT_ID environment variable not set. Using dummy value.",
     );
-    mergedConfig.browserbaseProjectId = "dummy-browserbase-project-id";
+    cliOptions.browserbaseProjectId = "dummy-browserbase-project-id";
   }
   if (!mergedConfig.modelApiKey) {
     console.warn(
@@ -86,8 +77,6 @@ export async function configFromCLIOptions(
   cliOptions: CLIOptions,
 ): Promise<Config> {
   return {
-    browserbaseApiKey: cliOptions.browserbaseApiKey,
-    browserbaseProjectId: cliOptions.browserbaseProjectId,
     server: {
       port: cliOptions.port,
       host: cliOptions.host,

@@ -215,21 +215,19 @@ This will clean, build, and publish the package using pnpm's built-in publishing
 
 The Browserbase MCP server accepts the following command-line flags:
 
-| Flag                          | Description                                                                 |
-| ----------------------------- | --------------------------------------------------------------------------- |
-| `--browserbaseApiKey <key>`   | Your Browserbase API key for authentication                                 |
-| `--browserbaseProjectId <id>` | Your Browserbase project ID                                                 |
-| `--proxies`                   | Enable Browserbase proxies for the session                                  |
-| `--advancedStealth`           | Enable Browserbase Advanced Stealth (Only for Scale Plan Users)             |
-| `--contextId <contextId>`     | Specify a Browserbase Context ID to use                                     |
-| `--persist [boolean]`         | Whether to persist the Browserbase context (default: true)                  |
-| `--port <port>`               | Port to listen on for HTTP/SHTTP transport                                  |
-| `--host <host>`               | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
-| `--cookies [json]`            | JSON array of cookies to inject into the browser                            |
-| `--browserWidth <width>`      | Browser viewport width (default: 1024)                                      |
-| `--browserHeight <height>`    | Browser viewport height (default: 768)                                      |
-| `--modelName <model>`         | The model to use for Stagehand (default: google/gemini-2.0-flash)           |
-| `--modelApiKey <key>`         | API key for the custom model provider (required when using custom models)   |
+| Flag                       | Description                                                                 |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `--proxies`                | Enable Browserbase proxies for the session                                  |
+| `--advancedStealth`        | Enable Browserbase Advanced Stealth (Only for Scale Plan Users)             |
+| `--contextId <contextId>`  | Specify a Browserbase Context ID to use                                     |
+| `--persist [boolean]`      | Whether to persist the Browserbase context (default: true)                  |
+| `--port <port>`            | Port to listen on for HTTP/SHTTP transport                                  |
+| `--host <host>`            | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
+| `--cookies [json]`         | JSON array of cookies to inject into the browser                            |
+| `--browserWidth <width>`   | Browser viewport width (default: 1024)                                      |
+| `--browserHeight <height>` | Browser viewport height (default: 768)                                      |
+| `--modelName <model>`      | The model to use for Stagehand (default: google/gemini-2.0-flash)           |
+| `--modelApiKey <key>`      | API key for the custom model provider (required when using custom models)   |
 
 These flags can be passed directly to the CLI or configured in your MCP configuration file.
 
