@@ -102,8 +102,8 @@ export const configSchema = z
   })
   .refine(
     (data) => {
-      // If any model is explicitly specified, API key is required
-      if (data.modelName) {
+      // If a non-default model is explicitly specified, API key is required
+      if (data.modelName && data.modelName !== "gemini-2.0-flash") {
         return data.modelApiKey !== undefined && data.modelApiKey.length > 0;
       }
       return true;
