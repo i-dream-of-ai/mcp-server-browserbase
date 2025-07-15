@@ -3,6 +3,14 @@ import type { AvailableModelSchema } from "@browserbasehq/stagehand";
 
 export type Config = {
   /**
+   * Browserbase API Key to authenticate requests
+   */
+  browserbaseApiKey: string;
+  /**
+   * Browserbase Project ID associated with the API key
+   */
+  browserbaseProjectId: string;
+  /**
    * Whether or not to use Browserbase proxies
    * https://docs.browserbase.com/features/proxies
    *

@@ -69,10 +69,7 @@ program
     const config = await resolveConfig(options);
     const serverList = new ServerList(async () =>
       createServerFunction({
-        config: config as Required<
-          Pick<typeof config, "browserbaseApiKey" | "browserbaseProjectId">
-        > &
-          typeof config,
+        config: config,
       }),
     );
     setupExitWatchdog(serverList);

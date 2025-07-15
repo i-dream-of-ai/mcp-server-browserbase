@@ -6,8 +6,6 @@ export type ToolCapability = "core" | string;
 
 // Define Command Line Options Structure
 export type CLIOptions = {
-  browserbaseApiKey?: string;
-  browserbaseProjectId?: string;
   proxies?: boolean;
   advancedStealth?: boolean;
   contextId?: string;
@@ -23,6 +21,8 @@ export type CLIOptions = {
 
 // Default Configuration Values
 const defaultConfig: Config = {
+  browserbaseApiKey: process.env.BROWSERBASE_API_KEY ?? "",
+  browserbaseProjectId: process.env.BROWSERBASE_PROJECT_ID ?? "",
   proxies: false,
   server: {
     port: undefined,
@@ -50,18 +50,19 @@ export async function resolveConfig(cliOptions: CLIOptions): Promise<Config> {
   // --------------------------------
 
   // Basic validation for Browserbase keys - provide dummy values if not set
-  if (!cliOptions.browserbaseApiKey) {
+  if (!mergedConfig.browserbaseApiKey) {
     console.warn(
       "Warning: BROWSERBASE_API_KEY environment variable not set. Using dummy value.",
     );
-    cliOptions.browserbaseApiKey = "dummy-browserbase-api-key";
+    mergedConfig.browserbaseApiKey = "dummy-browserbase-api-key";
   }
-  if (!cliOptions.browserbaseProjectId) {
+  if (!mergedConfig.browserbaseProjectId) {
     console.warn(
       "Warning: BROWSERBASE_PROJECT_ID environment variable not set. Using dummy value.",
     );
-    cliOptions.browserbaseProjectId = "dummy-browserbase-project-id";
+    mergedConfig.browserbaseProjectId = "dummy-browserbase-project-id";
   }
+
   if (!mergedConfig.modelApiKey) {
     console.warn(
       "Warning: MODEL_API_KEY environment variable not set. Using dummy value.",
@@ -77,6 +78,8 @@ export async function configFromCLIOptions(
   cliOptions: CLIOptions,
 ): Promise<Config> {
   return {
+    browserbaseApiKey: process.env.BROWSERBASE_API_KEY ?? "",
+    browserbaseProjectId: process.env.BROWSERBASE_PROJECT_ID ?? "",
     server: {
       port: cliOptions.port,
       host: cliOptions.host,
