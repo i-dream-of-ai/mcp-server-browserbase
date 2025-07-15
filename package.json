@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
-    "prepare": "husky",
+    "prepare": "husky && npm run build",
     "watch": "tsc --watch",
     "smithery": "npx @smithery/cli dev src/index.ts",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js",
