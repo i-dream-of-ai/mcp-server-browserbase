@@ -27,7 +27,7 @@ export const createStagehandInstance = async (
     projectId,
     modelName: (params.modelName ||
       config.modelName ||
-      "google/gemini-2.0-flash") as AvailableModel,
+      "gemini-2.0-flash") as AvailableModel,
     modelClientOptions: {
       apiKey: config.modelApiKey || process.env.GEMINI_API_KEY,
     },

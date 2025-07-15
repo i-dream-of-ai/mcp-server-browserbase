@@ -13,10 +13,10 @@ export async function startStdioTransport(
 ) {
   // Check if we're using the default model without an API key
   if (config) {
-    const modelName = config.modelName || "google/gemini-2.0-flash";
+    const modelName = config.modelName || "gemini-2.0-flash";
     const hasModelApiKey = config.modelApiKey || process.env.GEMINI_API_KEY;
 
-    if (modelName.includes("google/gemini") && !hasModelApiKey) {
+    if (modelName.includes("gemini") && !hasModelApiKey) {
       console.error(`
 ⚠️  IMPORTANT: MCP Server Configuration Update Required
 

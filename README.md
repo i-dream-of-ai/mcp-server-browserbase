@@ -226,7 +226,7 @@ The Browserbase MCP server accepts the following command-line flags:
 | `--cookies [json]`         | JSON array of cookies to inject into the browser                            |
 | `--browserWidth <width>`   | Browser viewport width (default: 1024)                                      |
 | `--browserHeight <height>` | Browser viewport height (default: 768)                                      |
-| `--modelName <model>`      | The model to use for Stagehand (default: google/gemini-2.0-flash)           |
+| `--modelName <model>`      | The model to use for Stagehand (default: gemini-2.0-flash)                  |
 | `--modelApiKey <key>`      | API key for the custom model provider (required when using custom models)   |
 
 These flags can be passed directly to the CLI or configured in your MCP configuration file.
@@ -411,7 +411,7 @@ For Claude models:
 
 Available models include:
 
-- **Gemini**: `google/gemini-2.0-flash` (default), `google/gemini-1.5-pro`, `google/gemini-1.5-flash`
+- **Gemini**: `gemini-2.0-flash` (default), `gemini-1.5-pro`, `gemini-1.5-flash`
 - **OpenAI**: `gpt-4o`, `gpt-4o-mini`, `o1-mini`, `o1-preview`, `o3-mini`
 - **Claude**: `claude-3-5-sonnet-latest`, `claude-3-7-sonnet-latest`
 - **Other providers**: Cerebras, Groq, and more
