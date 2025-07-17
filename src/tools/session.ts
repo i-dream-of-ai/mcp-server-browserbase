@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { Tool, ToolSchema, ToolResult } from "./tool.js";
 import type { Context } from "../context.js";
 import type { ToolActionResult } from "../types/types.js";
+import { Browserbase } from "@browserbasehq/sdk";
 
 // Import SessionManager functions
 import {
@@ -77,19 +78,28 @@ async function handleCreateSession(
       }
 
       context.currentSessionId = targetSessionId;
+      const bb = new Browserbase({
+        apiKey: config.browserbaseApiKey,
+      });
+      const debugUrl = (await bb.sessions.debug(session.sessionId))
+        .debuggerFullscreenUrl;
       process.stderr.write(
         `[tool.connected] Successfully connected to Browserbase session. Internal ID: ${targetSessionId}, Actual ID: ${session.sessionId}`,
       );
 
       process.stderr.write(
-        `[SessionManager] Browserbase Live Debugger URL: https://www.browserbase.com/sessions/${session.sessionId}`,
+        `[SessionManager] Browserbase Live Session View URL: https://www.browserbase.com/sessions/${session.sessionId}`,
+      );
+
+      process.stderr.write(
+        `[SessionManager] Browserbase Live Debugger URL: ${debugUrl}`,
       );
 
       return {
         content: [
           {
             type: "text",
-            text: `https://www.browserbase.com/sessions/${session.sessionId}`,
+            text: `Browserbase Live Session View URL: https://www.browserbase.com/sessions/${session.sessionId}\nBrowserbase Live Debugger URL: ${debugUrl}`,
           },
         ],
       };

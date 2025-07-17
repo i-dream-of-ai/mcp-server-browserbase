@@ -207,10 +207,10 @@ export async function ensureDefaultSessionInternal(
   config: Config,
 ): Promise<BrowserSession> {
   const sessionId = defaultSessionId;
-  let needsRecreation = false;
+  let needsReCreation = false;
 
   if (!defaultBrowserSession) {
-    needsRecreation = true;
+    needsReCreation = true;
     process.stderr.write(
       `[SessionManager] Default session ${sessionId} not found, creating.\n`,
     );
@@ -218,7 +218,7 @@ export async function ensureDefaultSessionInternal(
     !defaultBrowserSession.browser.isConnected() ||
     defaultBrowserSession.page.isClosed()
   ) {
-    needsRecreation = true;
+    needsReCreation = true;
     process.stderr.write(
       `[SessionManager] Default session ${sessionId} is stale, recreating.\n`,
     );
@@ -227,7 +227,7 @@ export async function ensureDefaultSessionInternal(
     browsers.delete(sessionId);
   }
 
-  if (needsRecreation) {
+  if (needsReCreation) {
     try {
       defaultBrowserSession = await createNewBrowserSession(sessionId, config);
       return defaultBrowserSession;

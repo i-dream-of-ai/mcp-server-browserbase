@@ -1,6 +1,6 @@
 import type { Cookie } from "playwright-core";
 import type { Config } from "../config.d.ts";
-import { AvailableModelSchema } from "@browserbasehq/stagehand";
+import type { AvailableModel } from "./types/models.js";
 
 export type ToolCapability = "core" | string;
 
@@ -15,7 +15,7 @@ export type CLIOptions = {
   cookies?: Cookie[];
   browserWidth?: number;
   browserHeight?: number;
-  modelName?: typeof AvailableModelSchema;
+  modelName?: typeof AvailableModel;
   modelApiKey?: string;
 };
 
@@ -33,7 +33,7 @@ const defaultConfig: Config = {
     browserHeight: 768,
   },
   cookies: undefined,
-  modelName: "gemini-2.0-flash", // Default Model
+  modelName: "google/gemini-2.0-flash", // Default Model
 };
 
 // Resolve final configuration by merging defaults, file config, and CLI options

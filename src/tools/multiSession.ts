@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Browserbase } from "@browserbasehq/sdk";
 import {
   defineTool,
   type Tool,
@@ -111,12 +112,24 @@ export const createSessionTool = defineTool({
 
       const session = await stagehandStore.create(context.config, params);
 
+      const bbSessionId = session.metadata?.bbSessionId;
+      if (!bbSessionId) {
+        throw new Error("No Browserbase session ID available");
+      }
+
+      // Get the debug URL using Browserbase SDK
+      const bb = new Browserbase({
+        apiKey: context.config.browserbaseApiKey,
+      });
+      const debugUrl = (await bb.sessions.debug(bbSessionId))
+        .debuggerFullscreenUrl;
+
       return {
         action: async () => ({
           content: [
             {
               type: "text",
-              text: `Created session ${session.id}${name ? ` (${name})` : ""}\nBrowserbase session: ${session.metadata?.bbSessionId}`,
+              text: `Created session ${session.id}${name ? ` (${name})` : ""}\nBrowserbase session: ${bbSessionId}\nBrowserbase Live Session View URL: https://www.browserbase.com/sessions/${bbSessionId}\nBrowserbase Live Debugger URL: ${debugUrl}`,
             },
           ],
         }),
