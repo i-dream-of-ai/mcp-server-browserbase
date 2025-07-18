@@ -21,10 +21,6 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 | Session Management | Create, manage, and close browser sessions                  |
 | Multi-Session      | Run multiple browser sessions in parallel                   |
 
-### Alternative Installation Methods
-
-[Smithery](https://smithery.ai/server/@browserbasehq/mcp-browserbase)
-
 ## How to Setup
 
 ### Quickstarts:
