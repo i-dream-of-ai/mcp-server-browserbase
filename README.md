@@ -25,7 +25,9 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 
 ### Quickstarts:
 
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.png)](cursor://anysphere.cursor-deeplink/mcp/install?name=browserbase&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAYnJvd3NlcmJhc2VocS9tY3AiXSwiZW52Ijp7IkJST1dTRVJCQVNFX0FQSV9LRVkiOiIiLCJCUk9XU0VSQkFTRV9QUk9KRUNUX0lEIjoiIn19)
+<a href="cursor://anysphere.cursor-deeplink/mcp/install?name=browserbase&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAYnJvd3NlcmJhc2VocS9tY3AiXSwiZW52Ijp7IkJST1dTRVJCQVNFX0FQSV9LRVkiOiIiLCJCUk9XU0VSQkFTRV9QUk9KRUNUX0lEIjoiIn19">
+  <img src="https://cursor.com/deeplink/mcp-install-dark.png" alt="Install MCP Server">
+</a>
 
 We currently support 2 transports for our MCP server, STDIO and SHTTP. We recommend you use SHTTP with our remote hosted url to take advantage of the server at full capacity.
 
