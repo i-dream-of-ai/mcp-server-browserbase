@@ -25,16 +25,6 @@ This server provides cloud browser automation capabilities using [Browserbase](h
 
 [Smithery](https://smithery.ai/server/@browserbasehq/mcp-browserbase)
 
-## Prerequisites
-
-This project uses [pnpm](https://pnpm.io/) as the package manager. If you don't have pnpm installed, you can install it via:
-
-```bash
-npm install -g pnpm
-# or
-curl -fsSL https://get.pnpm.io/install.sh | sh
-```
-
 ## How to Setup
 
 ### Quickstarts:
@@ -45,33 +35,33 @@ We currently support 2 transports for our MCP server, STDIO and SHTTP. We recomm
 
 ## SHTTP:
 
-When using our remote hosted server, we eat the LLM costs of Gemini, the [best performing model](www.stagehand.dev/evals) in [Stagehand](www.stagehand.dev).
-
 To use the Browserbase MCP Server through our remote hosted URL, add the following to your configuration.
 
-If your client supports SHTTP outright:
+Go to [smithery.ai](https://smithery.ai/server/@browserbasehq/mcp-browserbase) and enter your API keys and configuration to get a remote hosted URL.
+When using our remote hosted server, we provide the LLM costs for Gemini, the [best performing model](https://www.stagehand.dev/evals) in [Stagehand](https://www.stagehand.dev).
+
+![Smithery Image](assets/smithery.jpg)
+
+If your client supports SHTTP:
 
 ```json
 {
   "mcpServers": {
     "browserbase": {
-      "url": "mcp.browserbase.com/mcp?browserbaseApiKey=""&browserbaseProjectId=""",
+      "url": "your-smithery-url.com"
     }
   }
 }
 ```
 
-If your client doesn't support SHTTP outright:
+If your client doesn't support SHTTP:
 
 ```json
 {
   "mcpServers": {
     "browserbase": {
       "command": "npx",
-      "args": [
-        "mcp-remote",
-        "mcp.browserbase.com/mcp?browserbaseApiKey=""&browserbaseProjectId="""
-        ],
+      "args": ["mcp-remote", "your-smithery-url.com"]
     }
   }
 }
@@ -136,80 +126,7 @@ To your MCP Config JSON file add the following:
 }
 ```
 
-### SSE:
-
-Run the following command in your terminal. You can add any flags (see options below) that you see fit to customize your configuration.
-
-```bash
-   node cli.js --port 8931
-```
-
-Then in your MCP Config JSON file put the following:
-
-```json
-{
-  "mcpServers": {
-    "browserbase": {
-      "url": "http://localhost:8931/mcp",
-      "env": {
-        "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": "",
-        "GEMINI_API_KEY": ""
-      }
-    }
-  }
-}
-```
-
 Then reload your MCP client and you should be good to go!
-
-## Development
-
-### Getting Started
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/browserbase/mcp-server-browserbase.git
-   cd mcp-server-browserbase
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   pnpm install
-   ```
-
-3. **Build the project:**
-
-   ```bash
-   pnpm run build
-   ```
-
-4. **Run in development mode:**
-   ```bash
-   pnpm run watch
-   ```
-
-### Available Scripts
-
-- `pnpm build` - Build the TypeScript project
-- `pnpm watch` - Watch for changes and rebuild
-- `pnpm lint` - Run ESLint
-- `pnpm prettier:check` - Check code formatting
-- `pnpm prettier:fix` - Fix code formatting
-- `pnpm clean` - Clean build artifacts
-- `pnpm publish` - Build and publish to npm registry
-
-### Publishing
-
-To publish a new version:
-
-```bash
-pnpm run publish
-```
-
-This will clean, build, and publish the package using pnpm's built-in publishing capabilities.
 
 ## Configuration
 
@@ -303,32 +220,6 @@ To use contexts, set the --contextId flag in your MCP Config:
 }
 ```
 
-### Cookie Injection
-
-Why would you need to inject cookies? Our context API currently works on persistent cookies, but not session cookies. So sometimes our persistent auth might not work (we're working hard to add this functionality).
-
-You can inject cookies into the MCP by adding them to your MCP Config. Your cookies JSON must be in the format of [Playwright Cookies](https://playwright.dev/docs/api/class-browsercontext#browser-context-cookies)
-
-```json
-{
-  "mcpServers": {
-    "browserbase": {
-      "command": "npx",
-      "args": [
-        "@browserbasehq/mcp",
-        "--cookies",
-        "[{\"name\": \"session\", \"value\": \"abc123\", \"domain\": \".example.com\"}]"
-      ],
-      "env": {
-        "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": "",
-        "GEMINI_API_KEY": ""
-      }
-    }
-  }
-}
-```
-
 ### Browser Viewport Sizing
 
 The default viewport sizing for a browser session is 1024 x 768. You can adjust the Browser viewport sizing with browserWidth and browserHeight flags.
@@ -371,173 +262,20 @@ Here's how to configure different models:
       "args": [
         "@browserbasehq/mcp",
         "--modelName",
-        "gpt-4o",
-        "--modelApiKey",
-        "your-openai-api-key"
-      ],
-      "env": {
-        "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": "",
-        "GEMINI_API_KEY": ""
-      }
-    }
-  }
-}
-```
-
-For Claude models:
-
-```json
-{
-  "mcpServers": {
-    "browserbase": {
-      "command": "npx",
-      "args": [
-        "@browserbasehq/mcp",
-        "--modelName",
-        "claude-3-5-sonnet-latest",
+        "anthropic/claude-3-5-sonnet-latest",
         "--modelApiKey",
         "your-anthropic-api-key"
       ],
       "env": {
         "BROWSERBASE_API_KEY": "",
-        "BROWSERBASE_PROJECT_ID": "",
-        "GEMINI_API_KEY": ""
+        "BROWSERBASE_PROJECT_ID": ""
       }
     }
   }
 }
 ```
 
-Available models include:
-
-- **Gemini**: `google/gemini-2.0-flash` (default), `gemini-1.5-pro`, `gemini-1.5-flash`
-- **OpenAI**: `gpt-4o`, `gpt-4o-mini`, `o1-mini`, `o1-preview`, `o3-mini`
-- **Claude**: `claude-3-5-sonnet-latest`, `claude-3-7-sonnet-latest`
-- **Other providers**: Cerebras, Groq, and more
-
 _Note: The model must be supported in Stagehand. Check out the docs [here](https://docs.stagehand.dev/examples/custom_llms#supported-llms). When using any custom model, you must provide your own API key for that provider._
-
-## Tools
-
-The Browserbase MCP server provides the following tools for browser automation:
-
-### Browser Automation Tools
-
-- **browserbase_stagehand_navigate**
-  - Navigate to any URL in the browser
-  - Input:
-    - `url` (string): The URL to navigate to
-
-- **browserbase_stagehand_act**
-  - Perform an action on the web page using natural language
-  - Inputs:
-    - `action` (string): The action to perform (e.g., "click the login button")
-    - `variables` (object, optional): Variables used in the action template for sensitive data
-
-- **browserbase_stagehand_extract**
-  - Extract all text content from the current page (filters out CSS and JavaScript)
-  - No inputs required
-
-- **browserbase_stagehand_observe**
-  - Observe and find actionable elements on the web page
-  - Input:
-    - `instruction` (string): Specific instruction for observation (e.g., "find the login button")
-
-- **browserbase_screenshot**
-  - Capture a PNG screenshot of the current page
-  - No inputs required
-  - Output:
-    - `text`: Friendly confirmation message with the screenshot name
-    - `image`: Base-64 encoded PNG data
-
-### Session Management Tools
-
-- **browserbase_session_create**
-  - Create or reuse a cloud browser session using Browserbase with fully initialized Stagehand
-  - Applies all configuration flags (proxies, stealth, viewport, cookies, etc.)
-  - Initializes Stagehand instance connected to the browser session
-  - Input:
-    - `sessionId` (string, optional): Optional session ID to use/reuse. If not provided, creates new session
-  - Output:
-    - Live debugger URL for the Browserbase session
-
-- **browserbase_session_close**
-  - Close the current Browserbase session, disconnect the browser, and cleanup Stagehand instance
-  - Input:
-    - `random_string` (string, optional): Dummy parameter for consistent tool call format
-  - Output:
-    - Confirmation message and session replay URL
-
-### Multi-Session Management Tools
-
-The server supports managing multiple independent browser sessions in parallel, allowing you to control multiple browsers simultaneously for complex automation workflows:
-
-#### Session Lifecycle Management
-
-- **multi_browserbase_stagehand_session_create**
-  - Create a new independent Stagehand browser session with full web automation capabilities
-  - Each session is isolated with its own browser instance, cookies, and state
-  - Inputs:
-    - `name` (string, optional): Human-readable name for tracking (e.g., 'login-flow', 'data-scraping')
-    - `browserbaseSessionID` (string, optional): Resume an existing Browserbase session by ID
-    - `browserbaseSessionCreateParams` (object, optional): Advanced Browserbase configuration
-  - Output:
-    - Session ID and Browserbase session ID with live debugger URL
-
-- **multi_browserbase_stagehand_session_list**
-  - List all currently active Stagehand browser sessions with detailed metadata
-  - Shows session IDs, names, Browserbase session IDs, creation time, and age
-  - No inputs required
-  - Output:
-    - Comprehensive list of active sessions with status information
-
-- **multi_browserbase_stagehand_session_close**
-  - Close and clean up a specific Stagehand browser session
-  - Terminates browser instance, ends Browserbase session, and frees resources
-  - Input:
-    - `sessionId` (string): Exact session ID to close (cannot be undone)
-  - Output:
-    - Confirmation message with session replay URL
-
-#### Session-Specific Browser Automation
-
-All core browser automation tools are available with session-specific variants:
-
-- **multi_browserbase_stagehand_navigate_session**
-  - Navigate to a URL in a specific browser session
-  - Inputs:
-    - `sessionId` (string): The session ID to use
-    - `url` (string): The URL to navigate to
-
-- **multi_browserbase_stagehand_act_session**
-  - Perform an action in a specific browser session using natural language
-  - Inputs:
-    - `sessionId` (string): The session ID to use
-    - `action` (string): The action to perform (e.g., "click the login button")
-    - `variables` (object, optional): Variables for sensitive data in action templates
-
-- **multi_browserbase_stagehand_extract_session**
-  - Extract structured information from a specific browser session
-  - Inputs:
-    - `sessionId` (string): The session ID to use
-    - `instruction` (string): What to extract from the page
-
-- **multi_browserbase_stagehand_observe_session**
-  - Observe and find actionable elements in a specific browser session
-  - Inputs:
-    - `sessionId` (string): The session ID to use
-    - `instruction` (string): What to observe (e.g., "find the login button")
-    - `returnAction` (boolean, optional): Whether to return the action to perform
-
-#### Multi-Session Use Cases
-
-- **Parallel Data Collection**: Run multiple scraping sessions simultaneously across different websites
-- **A/B Testing**: Compare user flows across different browser sessions with varying configurations
-- **Authentication Workflows**: Maintain separate authenticated sessions for different user accounts
-- **Cross-Site Operations**: Perform coordinated actions across multiple websites or applications
-- **Load Testing**: Simulate multiple users interacting with web applications concurrently
-- **Backup Sessions**: Keep fallback sessions ready in case primary sessions encounter issues
 
 ### Resources
 
@@ -545,120 +283,6 @@ The server provides access to screenshot resources:
 
 1. **Screenshots** (`screenshot://<screenshot-name>`)
    - PNG images of captured screenshots
-
-## Project Structure
-
-```
-mcp-server-browserbase/
-├── src/                          # TypeScript source code
-│   ├── index.ts                  # Main entry point and Smithery default export
-│   ├── config.ts                 # Configuration management and CLI parsing
-│   ├── context.ts                # Context class managing Stagehand instances
-│   ├── sessionManager.ts         # Browserbase session lifecycle management
-│   ├── stagehandStore.ts         # Multi-session store for managing parallel browser sessions
-│   ├── program.ts                # CLI program setup using Commander.js
-│   ├── transport.ts              # HTTP/SHTTP and STDIO transport handlers
-│   ├── server.ts                 # Server list management
-│   ├── utils.ts                  # Utility functions
-│   ├── mcp/                      # MCP protocol implementations
-│   │   ├── prompts.ts            # Prompt templates and handlers for MCP clients
-│   │   └── resources.ts          # Resource management (screenshots) with URI-based access
-│   ├── tools/                    # Tool definitions and implementations
-│   │   ├── act.ts                # Stagehand action execution tool
-│   │   ├── extract.ts            # Page content extraction tool
-│   │   ├── navigate.ts           # URL navigation tool
-│   │   ├── observe.ts            # Element observation tool
-│   │   ├── screenshot.ts         # Screenshot capture tool
-│   │   ├── session.ts            # Single session management tools
-│   │   ├── multiSession.ts       # Multi-session management and session-aware tools
-│   │   ├── tool.ts               # Tool type definitions and interfaces
-│   │   └── index.ts              # Tool exports and registration
-│   └── types/                    # TypeScript type definitions
-│       └── types.ts              # Shared type definitions for sessions and configurations
-├── dist/                         # Compiled JavaScript output
-├── assets/                       # Images and documentation assets
-├── cli.js                        # Executable entry point for CLI usage
-├── config.d.ts                   # TypeScript type definitions
-├── index.d.ts & index.js         # Module exports for programmatic usage
-├── package.json                  # Package metadata and dependencies
-├── smithery.config.js            # Smithery configuration
-├── tsconfig.json                 # TypeScript compiler configuration
-└── README.md                     # This file
-```
-
-## Module Descriptions
-
-### Core Modules
-
-**index.ts** - The main Smithery export function that creates and configures the MCP server with Zod schema validation, tool registration, and proper metadata.
-
-**config.ts** - Configuration management handling CLI options, environment variables, defaults, and Browserbase API validation.
-
-**context.ts** - The Context class that manages Stagehand instances per session, executes tool actions with error handling, and coordinates between tools and sessions.
-
-**sessionManager.ts** - Creates and manages Browserbase sessions via CDP, handles session lifecycle, cookie injection, and tracks active sessions.
-
-### Infrastructure
-
-**program.ts** - CLI program setup using Commander.js with all command-line options, argument parsing, and transport initialization.
-
-**transport.ts** - Transport layer implementations for STDIO and HTTP/SHTTP communication with session management across different connection types.
-
-**server.ts** - Server list management providing factory patterns for server creation and handling multiple concurrent connections.
-
-**stagehandStore.ts** - Multi-session store managing parallel browser sessions with lifecycle tracking, automatic cleanup, and session metadata.
-
-### MCP Protocol Specifics Implementation
-
-**mcp/prompts.ts** - Prompt template definitions and handlers implementing the MCP prompts specification with argument substitution.
-
-**mcp/resources.ts** - Resource management implementing the MCP resources specification, handling screenshot storage, URI resolution, and base64-encoded data serving.
-
-### Tools & Types
-
-**tools/** - Individual tool implementations with type-safe Zod schemas including:
-
-- Core browser automation tools (navigate, act, extract, observe, screenshot)
-- Single session management tools (session.ts)
-- Multi-session management and session-aware tool variants (multiSession.ts)
-- Tool type definitions and interfaces (tool.ts)
-- Centralized tool exports and registration (index.ts)
-
-**types/types.ts** - Shared TypeScript type definitions for sessions, configurations, and MCP protocol structures.
-
-**utils.ts** - Message sanitization utilities ensuring proper JSON formatting for MCP messages.
-
-## Environment Variables
-
-- `BROWSERBASE_API_KEY`: API key for Browserbase authentication (required)
-- `BROWSERBASE_PROJECT_ID`: Project ID for Browserbase (required)
-- `DEBUG`: Enable debug logging (optional)
-
-## MCP Capabilities
-
-This server implements the following MCP capabilities:
-
-- **Tools**: 14 tools for comprehensive browser automation
-  - 5 Core Stagehand tools: navigate, act, extract, observe, screenshot
-  - 2 Single-session management tools: create and close Browserbase sessions
-  - 7 Multi-session tools: create, list, close, navigate, act, extract, observe with specific sessions
-- **Prompts**: Prompt templates for common automation tasks
-- **Resources**: Screenshot resource management with URI-based access
-
-### Session Management Architecture
-
-The server supports two session management approaches:
-
-1. **Single Session Mode**: Traditional approach with one active browser session
-   - Tools: `browserbase_session_create`, `browserbase_session_close`
-   - Simpler for basic automation tasks
-   - Automatically manages the active session
-
-2. **Multi-Session Mode**: Advanced approach with multiple parallel browser sessions
-   - Tools: `multi_browserbase_stagehand_session_create`, `multi_browserbase_stagehand_session_close`, `multi_browserbase_stagehand_session_list`
-   - Session-specific variants of all core tools (with `_session` suffix)
-   - Ideal for complex workflows requiring parallel browser instances
-   - Each session maintains independent state, cookies, and browser context
 
 ## Key Features
 
@@ -676,6 +300,10 @@ For more information about the Model Context Protocol, visit:
 
 - [MCP Documentation](https://modelcontextprotocol.io/docs)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
+
+For the official MCP Docs:
+
+- [Browserbase MCP](https://docs.browserbase.com/integrations/mcp/introduction)
 
 ## License
 

@@ -17,57 +17,7 @@ export async function startStdioTransport(
     const hasModelApiKey = config.modelApiKey || process.env.GEMINI_API_KEY;
 
     if (modelName.includes("gemini") && !hasModelApiKey) {
-      console.error(`
-⚠️  IMPORTANT: MCP Server Configuration Update Required
-
-We've made changes to the MCP server that now require model API keys for local STDIO usage.
-
-You're using the default Gemini model (${modelName}) but no API key is configured.
-
-To fix this, you have two options:
-
-1. Set the GEMINI_API_KEY environment variable:
-   export GEMINI_API_KEY="your-gemini-api-key"
-
-2. Or add the --modelApiKey flag to your MCP config:
-   {
-     "mcpServers": {
-       "browserbase": {
-         "command": "npx",
-         "args": ["@browserbasehq/mcp"],
-         "env": {
-           "BROWSERBASE_API_KEY": "your-browserbase-key",
-           "BROWSERBASE_PROJECT_ID": "your-project-id"
-           "GEMINI_API_KEY": "your-gemini-api-key"
-         }
-       }
-     }
-   }
-
-You can get a Gemini API key from: https://aistudio.google.com/app/apikey
-
-3. Or choose another supported model:
-   Available models: https://docs.stagehand.dev/examples/custom_llms#llm-customization
-
-   {
-     "mcpServers": {
-       "browserbase": {
-         "command": "npx",
-         "args": [
-          "@browserbasehq/mcp",
-          "--modelName", "available-model",
-          "--modelApiKey", "your-api-key",
-         ],
-         "env": {
-           "BROWSERBASE_API_KEY": "your-browserbase-key",
-           "BROWSERBASE_PROJECT_ID": "your-project-id"
-         }
-       }
-     }
-   }
-
-The server will now attempt to start, but will likely fail without the API key...
-`);
+      console.error(`Need to set GEMINI_API_KEY in your environment variables`);
     }
   }
 
