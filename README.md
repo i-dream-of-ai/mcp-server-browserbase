@@ -169,7 +169,7 @@ To use proxies, set the --proxies flag in your MCP Config:
   "mcpServers": {
     "browserbase": {
       "command": "npx",
-      "args": ["@browserbasehq/mcp", "--proxies"],
+      "args": ["@browserbasehq/mcp-server-browserbase", "--proxies"],
       "env": {
         "BROWSERBASE_API_KEY": "",
         "BROWSERBASE_PROJECT_ID": "",
