@@ -4,7 +4,7 @@ import extractTool from "./extract.js";
 import observeTool from "./observe.js";
 import screenshotTool from "./screenshot.js";
 import sessionTools from "./session.js";
-import getUrlTool, { getAllUrlsTool } from "./url.js";
+import getUrlTool from "./url.js";
 import {
   createSessionTool,
   listSessionsTool,
@@ -49,7 +49,6 @@ export const TOOLS = [
   observeTool,
   screenshotTool,
   getUrlTool,
-  getAllUrlsTool,
 ];
 
 export const sessionManagementTools = sessionTools;
