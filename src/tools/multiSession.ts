@@ -13,6 +13,7 @@ import navigateTool from "./navigate.js";
 import actTool from "./act.js";
 import extractTool from "./extract.js";
 import observeTool from "./observe.js";
+import getUrlTool, { getAllUrlsTool } from "./url.js";
 
 /**
  * Creates a session-aware version of an existing tool
@@ -258,3 +259,11 @@ export const observeWithSessionTool = createMultiSessionAwareTool(observeTool, {
   namePrefix: "multi_",
   nameSuffix: "_session",
 });
+
+export const getUrlWithSessionTool = createMultiSessionAwareTool(getUrlTool, {
+  namePrefix: "multi_",
+  nameSuffix: "_session",
+});
+
+// This wraps getAllUrlsTool which doesn't need sessionId
+export const getAllUrlsWithSessionTool = getAllUrlsTool;
