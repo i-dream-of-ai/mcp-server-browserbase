@@ -6,8 +6,11 @@ import * as stagehandStore from "../stagehandStore.js";
 
 // Empty schema since getting URL doesn't require any input
 const GetUrlInputSchema = z.object({});
+type GetUrlInput = z.infer<typeof GetUrlInputSchema>;
+
 // Schema for getting all session URLs
 const GetAllUrlsInputSchema = z.object({});
+type GetAllUrlsInput = z.infer<typeof GetAllUrlsInputSchema>;
 
 const getUrlSchema: ToolSchema<typeof GetUrlInputSchema> = {
   name: "browserbase_stagehand_get_url",
@@ -16,7 +19,11 @@ const getUrlSchema: ToolSchema<typeof GetUrlInputSchema> = {
   inputSchema: GetUrlInputSchema,
 };
 
-async function handleGetUrl(context: Context): Promise<ToolResult> {
+async function handleGetUrl(
+  context: Context,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  params: GetUrlInput,
+): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
       const stagehand = await context.getStagehand();
@@ -58,7 +65,12 @@ const getAllUrlsSchema: ToolSchema<typeof GetAllUrlsInputSchema> = {
   inputSchema: GetAllUrlsInputSchema,
 };
 
-async function handleGetAllUrls(): Promise<ToolResult> {
+async function handleGetAllUrls(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  context: Context,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  params: GetAllUrlsInput,
+): Promise<ToolResult> {
   const action = async (): Promise<ToolActionResult> => {
     try {
       const sessions = stagehandStore.list();
