@@ -48,6 +48,10 @@ export const configSchema = z
       .describe(
         "Use advanced stealth mode. Only available to Browserbase Scale Plan users",
       ),
+    keepAlive: z
+      .boolean()
+      .optional()
+      .describe("Whether or not to keep the Browserbase session alive"),
     context: z
       .object({
         contextId: z

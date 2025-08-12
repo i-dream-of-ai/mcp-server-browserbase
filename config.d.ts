@@ -24,6 +24,12 @@ export type Config = {
    */
   advancedStealth?: boolean;
   /**
+   * Whether or not to keep the Browserbase session alive
+   *
+   * @default false
+   */
+  keepAlive?: boolean;
+  /**
    * Potential Browserbase Context to use
    * Would be a context ID
    */

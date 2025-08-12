@@ -140,8 +140,9 @@ The Browserbase MCP server accepts the following command-line flags:
 | -------------------------- | --------------------------------------------------------------------------- |
 | `--proxies`                | Enable Browserbase proxies for the session                                  |
 | `--advancedStealth`        | Enable Browserbase Advanced Stealth (Only for Scale Plan Users)             |
+| `--keepAlive`              | Enable Browserbase Keep Alive Session                                       |
 | `--contextId <contextId>`  | Specify a Browserbase Context ID to use                                     |
-| `--persist [boolean]`      | Whether to persist the Browserbase context (default: true)                  |
+| `--persist`                | Whether to persist the Browserbase context (default: true)                  |
 | `--port <port>`            | Port to listen on for HTTP/SHTTP transport                                  |
 | `--host <host>`            | Host to bind server to (default: localhost, use 0.0.0.0 for all interfaces) |
 | `--cookies [json]`         | JSON array of cookies to inject into the browser                            |

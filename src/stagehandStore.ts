@@ -36,6 +36,7 @@ export const createStagehandInstance = async (
     browserbaseSessionCreateParams: {
       projectId,
       proxies: config.proxies,
+      keepAlive: config.keepAlive ?? false,
       browserSettings: {
         viewport: {
           width: config.viewPort?.browserWidth ?? 1024,
